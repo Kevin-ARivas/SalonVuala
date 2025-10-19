@@ -16,18 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from inicio import views as inicio_views
+from . import views as inicio_views
 
 urlpatterns = [
-    path('', inicio_views.index, name= 'index'), #Pagina Principal
-    path('admin/', admin.site.urls),
-    #Apps
-    path('agenda/', include( 'agenda.urls' )),
-    path('configuracion/', include( 'configuracion.urls' )),
-    path('finanzas/', include( 'finanzas.urls' )),
-    path('inventario/', include( 'inventario.urls' )),
-    path('proveedores/', include( 'proveedores.urls' )),
-    path('reportes/', include( 'reportes.urls' )),
-    path('servicios/', include( 'servicios.urls' )),
-    path('usuarios/', include( 'usuarios.urls' ))
+    
 ]

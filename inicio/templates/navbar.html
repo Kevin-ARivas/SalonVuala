@@ -1,0 +1,49 @@
+{% load static %}
+
+
+<nav class="bg-gray-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+        <!-- Logo -->
+        <div class="flex-shrink-0 flex items-center">
+            <a href="/" class="text-2xl font-bold tracking-tight hover:text-pink-400 transition-colors">
+                Salón Vualá
+            </a>
+    </div>
+
+    <!-- Links (Desktop) -->
+    <div class="hidden md:flex md:items-center space-x-6">
+        <a href=" " class="hover:text-pink-400 transition-colors">Inicio</a>
+        <a href=" " class="hover:text-pink-400 transition-colors">Servicios</a>
+        <a href=" " class="hover:text-pink-400 transition-colors">Citas</a>
+        <a href=" " class="hover:text-pink-400 transition-colors">Contacto</a>
+    </div>
+
+    <!-- Botón móvil -->
+    <div class="flex items-center md:hidden">
+        <button id="menu-btn" class="focus:outline-none focus:ring-2 focus:ring-pink-400">
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        </button>
+    </div>
+    </div>
+</div>
+
+<!-- Menú móvil -->
+<div id="mobile-menu" class="hidden md:hidden bg-gray-800">
+    <a href=" " class="block px-4 py-2 hover:bg-gray-700">Inicio</a>
+    <a href=" " class="block px-4 py-2 hover:bg-gray-700">Servicios</a>
+    <a href=" " class="block px-4 py-2 hover:bg-gray-700">Citas</a>
+    <a href=" " class="block px-4 py-2 hover:bg-gray-700">Contacto</a>
+</div>
+
+<!-- Script simple para abrir/cerrar el menú -->
+    <script>
+        const btn = document.getElementById('menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+            });
+    </script>
+</nav>
