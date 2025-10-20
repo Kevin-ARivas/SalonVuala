@@ -20,4 +20,5 @@ from . import views as inicio_views
 
 urlpatterns = [
     path('', inicio_views.index, name= 'index'), #Pagina Principal
+    path('dashboard/', inicio_views.dashboard, name= 'dashboard')
 ]
