@@ -1,50 +1,69 @@
 {% load static %}
 
-
-<nav class="bg-white-900 text-black shadow-md">
+<nav class="bg-white text-black shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-left h-16 gap-12">
-        <div class="flex-shrink-0 flex items-center">
-            <a href="{% url 'dashboard' %}" class="text-2xl font-bold tracking-tight hover:text-pink-400 transition-colors">
-               ✄ Salón Vualá
-            </a>
+        <div class="flex justify-between h-16 items-center gap-12">
+
+            <!-- Logo -->
+            <div class="flex-shrink-0 flex items-center">
+                <a href="{% url 'dashboard' %}" class="text-2xl font-bold tracking-tight hover:text-pink-400 transition-colors">
+                   ✄ Salón Vualá
+                </a>
+            </div>
+
+            <!-- Links (Desktop) -->
+            <div class="hidden md:flex md:items-center space-x-6">
+                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Citas</a>
+                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Servicios</a>
+                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Inventario</a>
+                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Finanzas</a>
+                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Reportes</a>
+            </div>
+
+            <!-- Usuario / Login -->
+            <div class="hidden md:flex md:items-center">
+                {% if request.user.is_authenticated %}
+                    <span class="mr-4 text-gray-800 font-medium">Hola, {{ request.user.first_name|default:request.user.username }}</span>
+                    <a href="" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors">Cerrar sesión</a>
+                {% else %}
+                    <a href="" class="bg-black text-white font-bold px-3 py-1 rounded hover:bg-pink-400 transition-colors">Iniciar sesión</a>
+                {% endif %}
+            </div>
+
+            <!-- Botón móvil -->
+            <div class="flex items-center md:hidden">
+                <button id="menu-btn" class="focus:outline-none focus:ring-2 focus:ring-pink-400">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- Links (Desktop) -->
-    <div class="hidden md:flex md:items-center space-x-6">
-        <a href=" " class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Citas</a>
-        <a href=" " class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Servicios</a>
-        <a href=" " class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Inventario</a>
-        <a href=" " class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Finanzas</a>
-        <a href=" " class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Reportes</a>
+    <!-- Menú móvil -->
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-800">
+        <a href="#" class="block px-4 py-2 hover:bg-gray-700">Dashboard</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-700">Citas</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-700">Inventario</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-700">Finanzas</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-700">Reportes</a>
+        <div class="border-t border-gray-700 mt-2">
+            {% if request.user.is_authenticated %}
+                <span class="block px-4 py-2 text-white">Hola, {{ request.user.first_name|default:request.user.username }}</span>
+                <a href="" class="block px-4 py-2 text-red-500 hover:text-red-400">Cerrar sesión</a>
+            {% else %}
+                <a href="" class="block px-4 py-2 text-indigo-400 hover:text-indigo-300">Iniciar sesión</a>
+            {% endif %}
+        </div>
     </div>
 
-    <!-- Botón móvil -->
-    <div class="flex items-center md:hidden">
-        <button id="menu-btn" class="focus:outline-none focus:ring-2 focus:ring-pink-400">
-        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-        </button>
-    </div>
-    </div>
-</div>
-
-<!-- Menú móvil -->
-<div id="mobile-menu" class="hidden md:hidden bg-gray-800">
-    <a href=" " class="block px-4 py-2 hover:bg-gray-700">Dashboard</a>
-    <a href=" " class="block px-4 py-2 hover:bg-gray-700">Citas</a>
-    <a href=" " class="block px-4 py-2 hover:bg-gray-700">Inventario</a>
-    <a href=" " class="block px-4 py-2 hover:bg-gray-700">Finanzas</a>
-    <a href=" " class="block px-4 py-2 hover:bg-gray-700">Reportes</a>
-</div>
-
-<!-- Script simple para abrir/cerrar el menú -->
+    <!-- Script simple para abrir/cerrar el menú -->
     <script>
         const btn = document.getElementById('menu-btn');
         const menu = document.getElementById('mobile-menu');
         btn.addEventListener('click', () => {
             menu.classList.toggle('hidden');
-            });
+        });
     </script>
 </nav>
