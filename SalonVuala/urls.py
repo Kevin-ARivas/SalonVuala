@@ -19,7 +19,7 @@ from django.urls import path, include
 from inicio import views as inicio_views
 
 urlpatterns = [
-    path('', inicio_views.index, name= 'index'), #Pagina Principal
+    path('', include('inicio.urls')), #Pagina Principal
     path('admin/', admin.site.urls),
     #Apps
     path('agenda/', include( 'agenda.urls' )),

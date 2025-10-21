@@ -5,14 +5,13 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-left h-16 gap-12">
         <div class="flex-shrink-0 flex items-center">
-            <a href="/" class="text-2xl font-bold tracking-tight hover:text-pink-400 transition-colors">
+            <a href="{% url 'dashboard' %}" class="text-2xl font-bold tracking-tight hover:text-pink-400 transition-colors">
                ✄ Salón Vualá
             </a>
     </div>
 
     <!-- Links (Desktop) -->
     <div class="hidden md:flex md:items-center space-x-6">
-        <a href="{{% urls 'dashboard' %}}" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Dashboard</a>
         <a href=" " class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Citas</a>
         <a href=" " class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Servicios</a>
         <a href=" " class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Inventario</a>
