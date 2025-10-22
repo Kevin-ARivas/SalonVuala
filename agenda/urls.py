@@ -16,8 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from . import views as inicio_views
+from . import views as agenda_views
 
 urlpatterns = [
-    
+    path('citas/', agenda_views.citas, name = 'citas'),
 ]

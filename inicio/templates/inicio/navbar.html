@@ -13,11 +13,10 @@
 
             <!-- Links (Desktop) -->
             <div class="hidden md:flex md:items-center space-x-6">
-                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Citas</a>
-                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Servicios</a>
-                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Inventario</a>
-                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Finanzas</a>
-                <a href="#" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Reportes</a>
+                <a href="{% url 'citas' %}" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Citas</a>
+                <a href="{% url 'inventario' %}" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Inventario</a>
+                <a href="{% url 'finanzas' %}" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Finanzas</a>
+                <a href="{% url 'reportes' %}" class="hover:text-white hover:bg-black font-bold rounded-md px-4 py-2 transition-colors">Reportes</a>
             </div>
 
             <!-- Usuario / Login -->

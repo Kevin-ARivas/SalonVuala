@@ -19,7 +19,6 @@ from django.urls import path, include
 from inicio import views as inicio_views
 
 urlpatterns = [
-    path('', include('inicio.urls')), #Pagina Principal
     path('admin/', admin.site.urls),
     #Apps
     path('agenda/', include( 'agenda.urls' )),
@@ -28,6 +27,6 @@ urlpatterns = [
     path('inventario/', include( 'inventario.urls' )),
     path('proveedores/', include( 'proveedores.urls' )),
     path('reportes/', include( 'reportes.urls' )),
-    path('servicios/', include( 'servicios.urls' )),
-    path('usuarios/', include( 'usuarios.urls' ))
+    path('', include( 'usuarios.urls' )),
+    path('inicio/', include( 'inicio.urls' ))
 ]
