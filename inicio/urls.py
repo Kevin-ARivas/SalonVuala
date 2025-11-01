@@ -17,7 +17,8 @@ Including another URLconf
 
 from django.urls import path
 from . import views as inicio_views
+from .views import dashboard
 
 urlpatterns = [
-    path('dashboard/', inicio_views.dashboard, name= 'dashboard'),
+    path('dashboard/', dashboard, name='dashboard'),
 ]

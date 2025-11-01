@@ -1,0 +1,30 @@
+{% extends 'inicio/index.html' %}
+{% load static %}
+{% block content %}
+
+<div class="min-h-screen bg-gray-100 p-6 flex justify-center">
+    <div class="bg-white shadow-xl rounded-xl p-6 w-full max-w-lg">
+
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Agregar Servicio</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label class="block font-semibold mb-1">Nombre del Servicio:</label>
+            <input type="text" name="nombre" required
+                   class="w-full border px-3 py-2 rounded-lg mb-4 focus:ring-pink-500 focus:border-pink-500">
+
+            <label class="block font-semibold mb-1">Precio:</label>
+            <input type="number" name="precio" required
+                   class="w-full border px-3 py-2 rounded-lg mb-4 focus:ring-pink-500 focus:border-pink-500">
+
+            <button type="submit"
+                    class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg transition">
+                Guardar Servicio
+            </button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

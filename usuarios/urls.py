@@ -16,9 +16,9 @@ Including another URLconf
 """
 
 from django.urls import path
-from . import views as usuario_views
+from .views import login_usuario
 
 urlpatterns = [
-    path('', usuario_views.login, name='login'),
-    path('register/', usuario_views.register, name='register'),
+    path('', login_usuario, name='login'),   # ← esta es la pantalla principal
+    path('login/', login_usuario, name='login'),  # opcional
 ]

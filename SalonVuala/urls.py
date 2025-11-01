@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from inicio import views as inicio_views
+from usuarios.views import login_usuario
 
 urlpatterns = [
+      path('login/', login_usuario, name='login'),
     path('admin/', admin.site.urls),
     #Apps
     path('agenda/', include( 'agenda.urls' )),
