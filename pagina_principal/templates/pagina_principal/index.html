@@ -1,0 +1,109 @@
+{% extends "pagina_principal/layout.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Hero tipo labarberia -->
+<section class="relative h-[78vh] bg-cover bg-center"
+  style="background-image:url('{% static "pagina_principal/img/hero.jpg" %}')">
+  <div class="absolute inset-0 bg-black/50"></div>
+  <div class="relative h-full flex items-center">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-4xl md:text-5xl font-extrabold">Belleza. Estilo. Confianza.</h1>
+      <p class="text-gray-200 mt-4 max-w-xl">
+        Cortes, color y peinados profesionales en Río Bueno. Reserva tu hora online.
+      </p>
+
+      <div class="mt-8 flex gap-4">
+        <a href="/reservar/" class="px-6 py-3 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)] transition">
+          Reservar ahora
+        </a>
+
+        <a href="/servicios/" class="px-6 py-3 border border-[var(--accent)] rounded hover:bg-[var(--accent)] hover:text-black transition">
+          Ver servicios
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Grid de servicios -->
+<section class="py-16">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-10">Nuestros Servicios</h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="border border-neutral-800 rounded p-6">
+        <h3 class="text-xl font-semibold">Corte & Styling</h3>
+        <p class="text-gray-400 mt-2">Asesoría + acabado profesional.</p>
+        <p class="mt-4 text-gray-300">Desde $6.000</p>
+      </div>
+
+      <div class="border border-neutral-800 rounded p-6">
+        <h3 class="text-xl font-semibold">Color / Mechas</h3>
+        <p class="text-gray-400 mt-2">Técnicas modernas (balayage, babylights).</p>
+        <p class="mt-4 text-gray-300">Desde $25.000</p>
+      </div>
+
+      <div class="border border-neutral-800 rounded p-6">
+        <h3 class="text-xl font-semibold">Peinados & Eventos</h3>
+        <p class="text-gray-400 mt-2">Novias, invitadas y sesiones.</p>
+        <p class="mt-4 text-gray-300">Desde $10.000</p>
+      </div>
+    </div>
+
+    <div class="mt-10 text-center">
+      <a href="/reservar/" class="px-4 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)] transition">
+        Agendar
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- Galería -->
+<section class="py-12 border-t border-neutral-800">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-8">Trabajos recientes</h2>
+
+    <div class="columns-2 md:columns-3 gap-4 [column-fill:_balance]">
+      <img src="{% static 'pagina_principal/img/gal1.jpg' %}" class="mb-4 rounded" />
+      <img src="{% static 'pagina_principal/img/gal2.jpg' %}" class="mb-4 rounded" />
+      <img src="{% static 'pagina_principal/img/gal3.jpg' %}" class="mb-4 rounded" />
+      <img src="{% static 'pagina_principal/img/gal4.jpg' %}" class="mb-4 rounded" />
+      <img src="{% static 'pagina_principal/img/gal5.jpg' %}" class="mb-4 rounded" />
+      <img src="{% static 'pagina_principal/img/gal6.jpg' %}" class="mb-4 rounded" />
+    </div>
+  </div>
+</section>
+
+<!-- Testimonios -->
+<section class="py-16 border-t border-neutral-800">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-10">Opiniones</h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <figure class="border border-neutral-800 rounded p-6">
+        <blockquote class="text-gray-300">“Excelente atención y resultado perfecto.”</blockquote>
+        <figcaption class="text-gray-500 mt-4">— Camila R.</figcaption>
+      </figure>
+
+      <figure class="border border-neutral-800 rounded p-6">
+        <blockquote class="text-gray-300">“Me encantó el color, tal cual lo quería.”</blockquote>
+        <figcaption class="text-gray-500 mt-4">— Valentina M.</figcaption>
+      </figure>
+
+      <figure class="border border-neutral-800 rounded p-6">
+        <blockquote class="text-gray-300">“Rápidos y profesionales. 100% recomendado.”</blockquote>
+        <figcaption class="text-gray-500 mt-4">— Javier A.</figcaption>
+      </figure>
+    </div>
+
+    <div class="text-center mt-10">
+      <a href="/reservar/" class="bg-[var(--accent)] text-black px-6 py-3 rounded hover:bg-[var(--accent-hover)] transition">
+        Reserva aquí
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

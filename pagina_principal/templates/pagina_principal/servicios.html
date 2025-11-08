@@ -1,0 +1,29 @@
+{% extends "pagina_principal/layout.html" %}
+{% block content %}
+<section class="max-w-6xl mx-auto px-4 py-16">
+  <h1 class="text-4xl font-bold mb-10 text-center">Servicios & Precios</h1>
+  <div class="grid md:grid-cols-2 gap-8">
+    <div class="border border-neutral-800 rounded p-6">
+      <h3 class="text-xl font-semibold mb-4">Cortes</h3>
+      <ul class="space-y-2 text-gray-300">
+        <li class="flex justify-between"><span>Corte mujer</span><span>$12.000</span></li>
+        <li class="flex justify-between"><span>Corte hombre</span><span>$6.000</span></li>
+        <li class="flex justify-between"><span>Peinado</span><span>$10.000</span></li>
+      </ul>
+    </div>
+    <div class="border border-neutral-800 rounded p-6">
+      <h3 class="text-xl font-semibold mb-4">Color</h3>
+      <ul class="space-y-2 text-gray-300">
+        <li class="flex justify-between"><span>Tintura completa</span><span>$25.000</span></li>
+        <li class="flex justify-between"><span>Balayage / Mechas</span><span>$60.000</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="text-center mt-12">
+<a href="/reservar/" class="mt-4 inline-block px-4 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)] transition">
+  Agendar este servicio
+</a>
+
+  </div>
+</section>
+{% endblock %}

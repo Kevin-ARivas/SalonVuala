@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Salón Vualá — Belleza & Estilo en Río Bueno</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Cortes, color, peinados y barbería. Reserva tu hora en Salón Vualá, Río Bueno." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- OG -->
+  <meta property="og:title" content="Salón Vualá" />
+  <meta property="og:description" content="Belleza. Estilo. Confianza." />
+  <meta property="og:type" content="website" />
+</head>
+<body class="bg-black text-white selection:bg-yellow-400 selection:text-black">
+
+  <!-- Topbar -->
+  <div class="bg-neutral-900 text-gray-300 text-sm">
+    <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between">
+      <p>Oriente 1078, Río Bueno</p>
+      <p>Lun–Sáb 10:00–20:00</p>
+    </div>
+  </div>
+
+  <!-- Navbar sticky estilo labarberia -->
+  <header class="sticky top-0 z-50 bg-black/80 backdrop-blur border-b border-neutral-800">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-2xl font-bold tracking-wide">SALÓN VUALÁ</a>
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="/" class="hover:text-yellow-400">Inicio</a>
+        <a href="/servicios/" class="hover:text-yellow-400">Servicios</a>
+        <a href="/matias/" class="hover:text-yellow-400">Quién es Matías</a>
+        <a href="/agenda/" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500">Reservar</a>
+        <a href="/productos/" class="hover:text-yellow-400">Productos</a>
+
+      </nav>
+      <button id="menuBtn" class="md:hidden border border-neutral-700 rounded px-3 py-1">Menú</button>
+    </div>
+    <div id="mobileMenu" class="md:hidden hidden border-t border-neutral-800">
+      <div class="px-4 py-3 flex flex-col gap-3">
+        <a href="/" class="hover:text-yellow-400">Inicio</a>
+        <a href="/servicios/" class="hover:text-yellow-400">Servicios</a>
+        <a href="/matias/" class="hover:text-yellow-400">Quién es Matías</a>
+        <a href="/agenda/" class="bg-yellow-400 text-black px-4 py-2 rounded text-center hover:bg-yellow-500">Reservar</a>
+      </div>
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <!-- Footer con mapa & horario estilo labarberia -->
+  <footer class="mt-20 border-t border-neutral-800">
+    <div class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-8">
+      <div>
+        <h4 class="text-xl font-semibold mb-4">Salón Vualá</h4>
+        <p class="text-gray-300">Belleza. Estilo. Confianza.</p>
+        <p class="text-gray-400 mt-3">Río Bueno — 1 sucursal</p>
+      </div>
+      <div>
+        <h4 class="text-xl font-semibold mb-4">Horario</h4>
+        <ul class="text-gray-300 space-y-1">
+          <li>Lun–Sáb: 10:00–20:00</li>
+          <li>Domingo: Cerrado</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-xl font-semibold mb-4">Dónde estamos</h4>
+        <p class="text-gray-300 mb-3">Oriente 1078, Río Bueno</p>
+        <a target="_blank" class="text-yellow-400 underline"
+           href="https://www.google.com/maps/search/?api=1&query=Oriente+1078+Rio+Bueno">
+           Ver en Google Maps
+        </a>
+      </div>
+    </div>
+    <div class="text-center text-gray-400 text-sm pb-10">© 2025 Salón Vualá</div>
+  </footer>
+
+  <!-- Botón flotante WhatsApp -->
+  <a href="https://wa.me/56900000000?text=Hola%20quiero%20reservar%20en%20Salón%20Vualá"
+     class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-3 rounded-full shadow-lg hover:bg-green-600"
+     aria-label="WhatsApp">
+     WhatsApp
+  </a>
+
+  <script>
+    const b=document.getElementById('menuBtn');
+    const m=document.getElementById('mobileMenu');
+    if(b){ b.onclick=()=>m.classList.toggle('hidden'); }
+  </script>
+</body>
+</html>

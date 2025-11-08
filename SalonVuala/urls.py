@@ -20,6 +20,7 @@ from inicio import views as inicio_views
 from usuarios.views import login_usuario
 
 urlpatterns = [
+    path('', include('pagina_principal.urls')),
       path('login/', login_usuario, name='login'),
     path('admin/', admin.site.urls),
     #Apps

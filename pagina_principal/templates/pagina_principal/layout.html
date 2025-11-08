@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Salón Vualá — Río Bueno</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    @keyframes zoomHero {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.12); }
+}
+.animate-zoom {
+  animation: zoomHero 20s ease-in-out infinite alternate;
+}
+
+    :root {
+      --accent: #E6A67A;
+      --accent-hover: #D18A5F;
+    }
+
+    /* Fade-in animación */
+    .fade {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: .7s ease-out;
+    }
+    .fade.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body class="bg-[#0A0A0A] text-white">
+
+<!-- NAV PUBLICO -->
+<header class="sticky top-0 bg-black/70 backdrop-blur border-b border-[#1b1b1b] z-50">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+    <a href="/" class="text-xl font-light tracking-wide">SALÓN VUALÁ</a>
+
+    <nav class="hidden md:flex gap-8 text-sm font-light">
+      <a href="/" class="hover:text-[var(--accent)]">Inicio</a>
+      <a href="/servicios/" class="hover:text-[var(--accent)]">Servicios</a>
+      <a href="/matias/" class="hover:text-[var(--accent)]">Quién es Matías</a>
+      <a href="/productos/" class="hover:text-[var(--accent)]">Productos</a>
+      <a href="/reservar/" class="px-4 py-2 border border-[var(--accent)] rounded hover:bg-[var(--accent)] hover:text-black transition">
+  Agendar
+</a>
+
+
+    </nav>
+  </div>
+</header>
+
+{% block content %}{% endblock %}
+
+<!-- FOOTER + MAPA -->
+<footer class="text-center text-[#BABABA] border-t border-[#1b1b1b] py-12 mt-20 text-sm">
+
+  <div class="mb-4 text-lg text-white font-light">Salón Vualá — Río Bueno</div>
+
+  <!-- Dirección -->
+  <p class="mb-2">Oriente 1078, Río Bueno</p>
+
+  <!-- Google Maps -->
+  <a href="https://www.google.com/maps/search/Oriente+1078,+Río+Bueno" target="_blank"
+     class="text-[var(--accent)] hover:text-[var(--accent-hover)] transition">
+    Ver ubicación en Google Maps
+  </a>
+
+  <div class="mt-8 text-[#BABABA] text-xs">
+    © {{ now|date:"Y" }} Salón Vualá — Todos los derechos reservados.
+  </div>
+
+</footer>
+
+<!-- BOTÓN WHATSAPP FLOTANTE -->
+<a href="https://wa.me/+569XXXXXXXX" target="_blank"
+   class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-full shadow-xl font-medium transition">
+  WhatsApp
+</a>
+
+<!-- SCRIPT FADE-IN -->
+<script>
+  const fades = document.querySelectorAll('.fade');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) entry.target.classList.add('show');
+    });
+  });
+  fades.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

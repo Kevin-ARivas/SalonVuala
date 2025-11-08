@@ -1,0 +1,229 @@
+{% extends "pagina_principal/layout.html" %}
+{% load static %}
+{% block content %}
+
+<section class="max-w-6xl mx-auto px-6 py-10">
+
+  <!-- Encabezado -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-semibold">Agenda tu cita</h1>
+    <p class="text-[#cfcfcf]">Elige servicio, fecha y completa tus datos. ¡Listo!</p>
+  </div>
+
+  <!-- Barra de pasos -->
+  <div class="flex items-center gap-3 text-sm mb-8">
+    <div id="p1" class="px-3 py-1 rounded border border-[var(--accent)] text-[var(--accent)]">1. Sucursal</div>
+    <div id="p2" class="px-3 py-1 rounded border border-[#2a2a2a] text-[#bababa]">2. Servicio</div>
+    <div id="p3" class="px-3 py-1 rounded border border-[#2a2a2a] text-[#bababa]">3. Fecha & Hora</div>
+    <div id="p4" class="px-3 py-1 rounded border border-[#2a2a2a] text-[#bababa]">4. Tus datos</div>
+  </div>
+
+  <!-- Paso 1 -->
+  <div id="step1" class="space-y-6">
+    <h2 class="text-xl font-semibold mb-2">Elige una sucursal</h2>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="border border-[#1b1b1b] rounded-xl overflow-hidden">
+        <img src="{% static 'pagina_principal/img/sucursal.jpg' %}" class="h-56 w-full object-cover" alt="Sucursal">
+        <div class="p-5">
+          <div class="text-lg font-semibold">{{ sucursal.nombre }}</div>
+          <div class="text-[#bababa]">{{ sucursal.direccion }}</div>
+          <div class="mt-4">
+            <button onclick="toStep(2)" class="px-5 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
+              Elegir esta sucursal
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-xs text-[#888]">*Sólo existe una sucursal.</p>
+  </div>
+
+  <!-- Paso 2 (SERVICIOS corregido) -->
+  <div id="step2" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold">Elige un servicio</h2>
+      <button onclick="toStep(1)" class="text-sm text-[#bababa] hover:text-white">← Cambiar sucursal</button>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      {% for s in servicios %}
+      <div 
+        class="servicio-card cursor-pointer border border-[#1b1b1b] rounded-lg p-5 hover:border-[var(--accent)] transition"
+        data-id="{{ s.id }}"
+        data-nombre="{{ s.nombre }}"
+        data-duracion="{{ s.duracion }}"
+        data-precio="{{ s.precio }}"
+        onclick="selectServicioCard(this)"
+      >
+        <div class="flex justify-between">
+          <div>
+            <div class="font-semibold">{{ s.nombre }}</div>
+            <div class="text-[#bababa] text-sm">{{ s.duracion }} min</div>
+          </div>
+          <div class="text-[var(--accent)] font-semibold">${{ s.precio }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="mt-6">
+      <button onclick="if(selectServicio()) toStep(3)" class="px-5 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
+        Continuar
+      </button>
+    </div>
+  </div>
+
+  <!-- Paso 3 -->
+  <div id="step3" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold">Selecciona fecha y hora</h2>
+      <button onclick="toStep(2)" class="text-sm text-[#bababa] hover:text-white">← Cambiar servicio</button>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="border border-[#1b1b1b] rounded-lg p-5">
+        <label class="block text-sm mb-2">Fecha</label>
+        <input type="date" id="fecha" class="w-full bg-transparent border border-[#2a2a2a] rounded p-2 focus:outline-none">
+        <p class="text-xs text-[#888] mt-2">* Abierto Lun–Sáb</p>
+      </div>
+
+      <div class="border border-[#1b1b1b] rounded-lg p-5">
+        <label class="block text-sm mb-2">Horas disponibles</label>
+        <div id="horas" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <button onclick="if(selectFechaHora()) toStep(4)" class="px-5 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
+        Continuar
+      </button>
+    </div>
+  </div>
+
+  <!-- Paso 4 -->
+  <div id="step4" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold">Tus datos</h2>
+      <button onclick="toStep(3)" class="text-sm text-[#bababa] hover:text-white">← Cambiar fecha u hora</button>
+    </div>
+
+    <form method="post" action="/reservar/enviar/" class="grid md:grid-cols-2 gap-6">
+      {% csrf_token %}
+      <input type="hidden" name="sucursal" value="{{ sucursal.nombre }}">
+      <input type="hidden" name="servicio" id="f_servicio">
+      <input type="hidden" name="fecha" id="f_fecha">
+      <input type="hidden" name="hora" id="f_hora">
+
+      <div class="border border-[#1b1b1b] rounded-lg p-5">
+        <label class="block text-sm">Nombre y Apellido</label>
+        <input name="nombre" required class="mt-2 w-full bg-transparent border border-[#2a2a2a] rounded p-2 focus:outline-none">
+
+        <label class="block text-sm mt-4">Email</label>
+        <input name="email" type="email" required class="mt-2 w-full bg-transparent border border-[#2a2a2a] rounded p-2 focus:outline-none">
+
+        <label class="block text-sm mt-4">Teléfono</label>
+        <input name="telefono" required class="mt-2 w-full bg-transparent border border-[#2a2a2a] rounded p-2 focus:outline-none">
+      </div>
+
+      <div class="border border-[#1b1b1b] rounded-lg p-5">
+        <div class="text-sm mb-4">Resumen</div>
+        <ul class="text-[#cfcfcf] space-y-1">
+          <li><b>Sucursal:</b> {{ sucursal.nombre }}</li>
+          <li><b>Servicio:</b> <span id="r_servicio">—</span></li>
+          <li><b>Duración:</b> <span id="r_duracion">—</span></li>
+          <li><b>Precio:</b> <span id="r_precio">—</span></li>
+          <li><b>Fecha:</b> <span id="r_fecha">—</span></li>
+          <li><b>Hora:</b> <span id="r_hora">—</span></li>
+        </ul>
+
+        <button type="submit" class="mt-6 w-full px-5 py-3 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
+          Confirmar reserva
+        </button>
+      </div>
+    </form>
+  </div>
+
+</section>
+
+<script>
+  let servicioSel = null;
+  let fechaSel = null;
+  let horaSel = null;
+
+  function selectServicioCard(card) {
+    document.querySelectorAll('.servicio-card').forEach(el => el.classList.remove('border-[var(--accent)]'));
+    card.classList.add('border-[var(--accent)]');
+
+    servicioSel = {
+      id: card.dataset.id,
+      nombre: card.dataset.nombre,
+      duracion: card.dataset.duracion,
+      precio: card.dataset.precio
+    };
+    marcarResumen();
+  }
+
+  function selectServicio() {
+    if (!servicioSel) {
+      alert("Selecciona un servicio");
+      return false;
+    }
+    return true;
+  }
+
+  function renderHoras(){
+    const cont = document.getElementById('horas');
+    cont.innerHTML = '';
+    const horas = [];
+    for(let h=10; h<=19; h++){
+      horas.push(`${String(h).padStart(2,'0')}:00`);
+      horas.push(`${String(h).padStart(2,'0')}:30`);
+    }
+    horas.forEach(t=>{
+      const b = document.createElement('button');
+      b.type='button';
+      b.className='px-3 py-1 border border-[#2a2a2a] rounded hover:border-[var(--accent)]';
+      b.textContent=t;
+      b.onclick=()=>{ horaSel=t; marcarResumen(); Array.from(cont.children).forEach(x=>x.classList.remove('!border-[var(--accent)]')); b.classList.add('!border-[var(--accent)]'); };
+      cont.appendChild(b);
+    });
+  }
+
+  function toStep(n){
+    ['step1','step2','step3','step4'].forEach((id,i)=> document.getElementById(id).classList.toggle('hidden', (i+1)!==n));
+    ['p1','p2','p3','p4'].forEach((id,i)=> document.getElementById(id).className = (i+1===n)?'px-3 py-1 rounded border border-[var(--accent)] text-[var(--accent)]':'px-3 py-1 rounded border border-[#2a2a2a] text-[#bababa]');
+    if(n===3){ renderHoras(); }
+  }
+
+  function selectFechaHora(){
+    const f=document.getElementById('fecha').value;
+    if(!f){ alert('Selecciona una fecha'); return false; }
+    if(!horaSel){ alert('Selecciona una hora'); return false; }
+    fechaSel=f;
+    marcarResumen();
+    return true;
+  }
+
+  function marcarResumen(){
+    if(servicioSel){
+      document.getElementById('r_servicio').textContent=servicioSel.nombre;
+      document.getElementById('r_duracion').textContent=servicioSel.duracion + ' min';
+      document.getElementById('r_precio').textContent='$'+servicioSel.precio;
+      document.getElementById('f_servicio').value=servicioSel.nombre;
+    }
+    if(fechaSel){
+      document.getElementById('r_fecha').textContent=fechaSel;
+      document.getElementById('f_fecha').value=fechaSel;
+    }
+    if(horaSel){
+      document.getElementById('r_hora').textContent=horaSel;
+      document.getElementById('f_hora').value=horaSel;
+    }
+  }
+
+  toStep(1);
+</script>
+
+{% endblock %}

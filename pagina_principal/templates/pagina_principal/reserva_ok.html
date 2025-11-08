@@ -1,0 +1,24 @@
+{% extends "pagina_principal/layout.html" %}
+{% block content %}
+
+<section class="max-w-3xl mx-auto px-6 py-20 text-center">
+  <h1 class="text-3xl font-semibold">¡Reserva recibida!</h1>
+  <p class="text-[#cfcfcf] mt-3">Te enviaremos un correo de confirmación.</p>
+
+  <div class="mt-8 text-left border border-[#1b1b1b] rounded-lg p-6 max-w-xl mx-auto">
+    <div><b>Sucursal:</b> {{ datos.sucursal }}</div>
+    <div><b>Servicio:</b> {{ datos.servicio }}</div>
+    <div><b>Fecha:</b> {{ datos.fecha }}</div>
+    <div><b>Hora:</b> {{ datos.hora }}</div>
+    <div><b>Nombre:</b> {{ datos.nombre }}</div>
+    <div><b>Email:</b> {{ datos.email }}</div>
+    <div><b>Teléfono:</b> {{ datos.telefono }}</div>
+    {% if datos.comentarios %}<div><b>Comentarios:</b> {{ datos.comentarios }}</div>{% endif %}
+  </div>
+
+  <a href="/" class="mt-8 inline-block px-6 py-3 border border-[var(--accent)] rounded hover:bg-[var(--accent)] hover:text-black transition">
+    Volver al inicio
+  </a>
+</section>
+
+{% endblock %}
