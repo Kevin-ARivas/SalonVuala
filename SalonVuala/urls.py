@@ -17,11 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from inicio import views as inicio_views
-from usuarios.views import login_usuario
+#from usuarios.views import login_usuario
 
 urlpatterns = [
     path('', include('pagina_principal.urls')),
-      path('login/', login_usuario, name='login'),
+    #path('login/', login_usuario, name='login'),
     path('admin/', admin.site.urls),
     #Apps
     path('agenda/', include( 'agenda.urls' )),
@@ -30,6 +30,6 @@ urlpatterns = [
     path('inventario/', include( 'inventario.urls' )),
     path('proveedores/', include( 'proveedores.urls' )),
     path('reportes/', include( 'reportes.urls' )),
-    path('', include( 'usuarios.urls' )),
+    path('usuarios/', include( 'usuarios.urls' )),
     path('inicio/', include( 'inicio.urls' ))
 ]

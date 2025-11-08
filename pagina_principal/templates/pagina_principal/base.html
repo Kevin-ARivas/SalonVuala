@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Salón Vualá — Belleza & Estilo en Río Bueno</title>
@@ -11,6 +12,7 @@
   <meta property="og:description" content="Belleza. Estilo. Confianza." />
   <meta property="og:type" content="website" />
 </head>
+
 <body class="bg-black text-white selection:bg-yellow-400 selection:text-black">
 
   <!-- Topbar -->
@@ -25,6 +27,8 @@
   <header class="sticky top-0 z-50 bg-black/80 backdrop-blur border-b border-neutral-800">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
       <a href="/" class="text-2xl font-bold tracking-wide">SALÓN VUALÁ</a>
+
+      <!-- NAVBAR PARA ESCRITORIO -->
       <nav class="hidden md:flex items-center gap-6">
         <a href="/" class="hover:text-yellow-400">Inicio</a>
         <a href="/servicios/" class="hover:text-yellow-400">Servicios</a>
@@ -32,15 +36,34 @@
         <a href="/agenda/" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500">Reservar</a>
         <a href="/productos/" class="hover:text-yellow-400">Productos</a>
 
+        {% if user.is_authenticated %}
+        <span class="text-gray-300">Bienvenido, <strong>{{ user.username }}</strong></span>
+        <a href="/logout/" class="hover:text-yellow-400">Cerrar sesión</a>
+        {% else %}
+        <a href="/login/" class="hover:text-yellow-400">Iniciar sesión</a>
+        <a href="/registro/" class="hover:text-yellow-400">Registrarse</a>
+        {% endif %}
       </nav>
+
       <button id="menuBtn" class="md:hidden border border-neutral-700 rounded px-3 py-1">Menú</button>
     </div>
+
+    <!-- NAVBAR PARA MÓVIL -->
     <div id="mobileMenu" class="md:hidden hidden border-t border-neutral-800">
       <div class="px-4 py-3 flex flex-col gap-3">
         <a href="/" class="hover:text-yellow-400">Inicio</a>
         <a href="/servicios/" class="hover:text-yellow-400">Servicios</a>
         <a href="/matias/" class="hover:text-yellow-400">Quién es Matías</a>
-        <a href="/agenda/" class="bg-yellow-400 text-black px-4 py-2 rounded text-center hover:bg-yellow-500">Reservar</a>
+        <a href="/agenda/"
+          class="bg-yellow-400 text-black px-4 py-2 rounded text-center hover:bg-yellow-500">Reservar</a>
+
+        {% if user.is_authenticated %}
+        <a href="/perfil/" class="hover:text-yellow-400">Bienvenido {{ user.username }}</a>
+        <a href="/logout/" class="hover:text-yellow-400">Cerrar sesión</a>
+        {% else %}
+        <a href="/login/" class="hover:text-yellow-400">Iniciar sesión</a>
+        <a href="/registro/" class="hover:text-yellow-400">Registrarse</a>
+        {% endif %}
       </div>
     </div>
   </header>
@@ -66,8 +89,8 @@
         <h4 class="text-xl font-semibold mb-4">Dónde estamos</h4>
         <p class="text-gray-300 mb-3">Oriente 1078, Río Bueno</p>
         <a target="_blank" class="text-yellow-400 underline"
-           href="https://www.google.com/maps/search/?api=1&query=Oriente+1078+Rio+Bueno">
-           Ver en Google Maps
+          href="https://www.google.com/maps/search/?api=1&query=Oriente+1078+Rio+Bueno">
+          Ver en Google Maps
         </a>
       </div>
     </div>
@@ -76,15 +99,16 @@
 
   <!-- Botón flotante WhatsApp -->
   <a href="https://wa.me/56900000000?text=Hola%20quiero%20reservar%20en%20Salón%20Vualá"
-     class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-3 rounded-full shadow-lg hover:bg-green-600"
-     aria-label="WhatsApp">
-     WhatsApp
+    class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-3 rounded-full shadow-lg hover:bg-green-600"
+    aria-label="WhatsApp">
+    WhatsApp
   </a>
 
   <script>
-    const b=document.getElementById('menuBtn');
-    const m=document.getElementById('mobileMenu');
-    if(b){ b.onclick=()=>m.classList.toggle('hidden'); }
+    const b = document.getElementById('menuBtn');
+    const m = document.getElementById('mobileMenu');
+    if (b) { b.onclick = () => m.classList.toggle('hidden'); }
   </script>
 </body>
+
 </html>

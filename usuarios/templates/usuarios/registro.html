@@ -1,0 +1,62 @@
+{% extends "pagina_principal/layout.html" %}
+{% load static %}
+
+{% block content %}
+<section class="max-w-md mx-auto px-6 py-20">
+    <h1 class="text-3xl font-semibold text-center mb-6">Crear una cuenta</h1>
+    <p class="text-[#cfcfcf] text-center mb-8">Completa tus datos para registrarte en Salón Vualá</p>
+
+    <form method="post" class="space-y-4 bg-[#111111] p-6 rounded-lg border border-[#1b1b1b]">
+        {% csrf_token %}
+        
+        <div>
+            <label class="block text-sm mb-1">Nombre de usuario</label>
+            {{ form.username }}
+            {% for error in form.username.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">Email</label>
+            {{ form.email }}
+            {% for error in form.email.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">Teléfono</label>
+            {{ form.telefono }}
+            {% for error in form.telefono.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">Contraseña</label>
+            {{ form.password1 }}
+            {% for error in form.password1.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">Repetir contraseña</label>
+            {{ form.password2 }}
+            {% for error in form.password2.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="w-full mt-4 px-5 py-3 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)] transition">
+            Registrarse
+        </button>
+    </form>
+
+    <p class="text-center text-sm text-[#888] mt-4">
+        ¿Ya tienes una cuenta?
+        <a href="{% url 'login_usuario' %}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] underline">Inicia sesión</a>
+    </p>
+</section>
+{% endblock %}

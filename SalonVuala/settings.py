@@ -29,6 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -78,21 +80,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'SalonVuala.wsgi.application'
-
+AUTH_USER_MODEL = 'usuarios.Usuarios'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+#BASE DE DATOS DE SQLLITE POR DEFECTO DE DJANGO LUEGO PODEMOS CAMBIARLA A POSTGRESQL O MYSQL SI ES NECESARIO O SEGUN 
+# EL SERVIDOR DONDE SE IMPLANTE
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'salonvuala',
-        'USER': 'root',
-        'PASSWORD': '',   
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 
