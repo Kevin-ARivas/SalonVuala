@@ -1,0 +1,59 @@
+{% extends "inicio/base_dashboard.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6">
+
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-3">
+        ➕ Agregar Nuevo Servicio
+    </h1>
+
+    <form method="POST" class="bg-white shadow-lg rounded-xl p-6">
+        {% csrf_token %}
+
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700">Nombre del Servicio</label>
+            <input type="text" name="nombre" required
+                class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700">Descripción</label>
+            <textarea name="descripcion" rows="3"
+                class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Precio (CLP)</label>
+                <input type="number" name="precio" min="0" required
+                    class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Duración</label>
+                <select name="duracion" required
+                    class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
+                    <option value="30">30 minutos</option>
+                    <option value="60">1 hora</option>
+                    <option value="90">1 hora y media</option>
+                    <option value="120">2 horas</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex justify-between mt-6">
+            <a href="{% url 'lista_servicios' %}" 
+               class="text-gray-600 hover:text-gray-900 transition font-semibold">
+                ← Volver a Servicios
+            </a>
+
+            <button type="submit"
+                class="bg-black text-white px-6 py-2 rounded-full font-semibold hover:bg-pink-500 transition">
+                Guardar Servicio
+            </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

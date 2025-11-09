@@ -1,0 +1,59 @@
+{% extends "inicio/base_dashboard.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6">
+
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-3">
+        ✏️ Editar Servicio
+    </h1>
+
+    <form method="POST" class="bg-white shadow-lg rounded-xl p-6">
+        {% csrf_token %}
+
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700">Nombre</label>
+            <input type="text" name="nombre" value="{{ servicio.nombre }}" required
+                class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700">Descripción</label>
+            <textarea name="descripcion" rows="3"
+                class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">{{ servicio.descripcion }}</textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Precio (CLP)</label>
+                <input type="number" name="precio" value="{{ servicio.precio }}" required
+                    class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Duración</label>
+                <select name="duracion"
+                    class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
+                    {% for dur, etiqueta in servicio.DURACION_CHOICES %}
+                        <option value="{{ dur }}" {% if servicio.duracion == dur %}selected{% endif %}>{{ etiqueta }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+
+        <div class="flex justify-between mt-6">
+            <a href="{% url 'lista_servicios' %}" class="text-gray-600 hover:text-gray-900 transition font-semibold">
+                ← Volver
+            </a>
+
+            <button type="submit"
+                class="bg-black text-white px-6 py-2 rounded-full font-semibold hover:bg-pink-500 transition">
+                Guardar Cambios
+            </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

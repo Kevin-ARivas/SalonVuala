@@ -18,5 +18,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('agregar-servicio/', views.agregar_servicio, name='agregar_servicio_form'),
+    path('', views.configuracion, name='configuracion'),
 ]
+
+

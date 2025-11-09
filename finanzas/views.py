@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from configuracion.models import Servicio
+from agenda.models import Servicio
 from inventario.models import Producto
 
 # Create your views here.

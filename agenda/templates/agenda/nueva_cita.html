@@ -1,0 +1,57 @@
+{% extends "inicio/base_dashboard.html" %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto bg-white shadow-xl rounded-lg p-6">
+  <h1 class="text-2xl font-bold mb-4">Nueva Cita</h1>
+
+  <form method="POST" class="space-y-4">
+    {% csrf_token %}
+
+    <div>
+      <label class="block font-semibold mb-1">Cliente</label>
+      <input name="cliente" type="text" class="w-full border p-2 rounded" required>
+    </div>
+
+    <div>
+      <label class="block font-semibold mb-1">Teléfono</label>
+      <input name="telefono" type="text" class="w-full border p-2 rounded">
+    </div>
+
+    <div>
+      <label class="block font-semibold mb-1">Servicio</label>
+      <select name="servicio" class="w-full border p-2 rounded" required>
+        {% for s in servicios %}
+          <option value="{{ s.id }}">{{ s.nombre }} - ${{ s.precio }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="block font-semibold mb-1">Estilista</label>
+      <select name="estilista" class="w-full border p-2 rounded" required>
+        {% for u in estilistas %}
+          <option value="{{ u.id }}">{{ u.first_name|default:u.username }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block font-semibold mb-1">Fecha</label>
+        <input type="date" name="fecha" class="w-full border p-2 rounded" required>
+      </div>
+      <div>
+        <label class="block font-semibold mb-1">Hora</label>
+        <input type="time" name="hora" class="w-full border p-2 rounded" required>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-4">
+      <a href="{% url 'citas' %}" class="px-4 py-2 rounded border">Cancelar</a>
+      <button class="px-4 py-2 rounded bg-black text-white hover:bg-pink-500">Guardar Cita</button>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}
