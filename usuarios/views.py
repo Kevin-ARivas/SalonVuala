@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Usuarios
 from .forms import UsuarioForm, UsuarioFormAdmin
 from django.contrib.auth import authenticate, login, logout
+
 # Create your views here.
 
 def listar_usuarios(request):
@@ -43,20 +44,19 @@ def login_usuario(request):
         username = request.POST['username']
         password = request.POST['password']
         usuario = authenticate(request, username=username, password=password)
+
         if usuario is not None:
-            print(usuario.tipo_usuario)
+            login(request, usuario)  # ✅ Se inicia sesión antes de redirigir
+
+            # Redirecciones según tipo de usuario
             if usuario.tipo_usuario == 'admin':
-                login(request, usuario)
-                print("Usuario admin ha iniciado sesión.")
                 return redirect('dashboard')
-            elif usuario.tipo_usuario == 'cliente':
-                login(request, usuario)
-                return redirect('pagina_inicio')
-            elif usuario.tipo_usuario == 'trabajador':
-                login(request, usuario)
-                return redirect('pagina_inicio')
-        else:
-            return render(request, 'usuarios/login.html', {'error': 'Credenciales inválidas'})
+
+            return redirect('pagina_inicio')  # cliente o trabajador
+
+        # Si falló la autenticación
+        return render(request, 'usuarios/login.html', {'error': 'Credenciales inválidas'})
+
     return render(request, 'usuarios/login.html')
 
 def logout_usuario(request):

@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+from inventario.models import Producto
+
 
 def index(request):
     return render(request, 'pagina_principal/index.html')
@@ -11,7 +13,9 @@ def matias(request):
     return render(request, 'pagina_principal/matias.html')
 
 def productos(request):
-    return render(request, 'pagina_principal/productos.html')
+    lista = Producto.objects.filter(tipo="venta")  # Solo los que se venden en front
+    return render(request, 'pagina_principal/productos.html', {"productos": lista})
+
 
 
 def reservar(request):

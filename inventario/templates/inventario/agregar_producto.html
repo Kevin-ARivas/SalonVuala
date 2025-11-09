@@ -1,29 +1,72 @@
-{% extends 'inicio/index.html' %}
+{% extends "inicio/base_dashboard.html" %}
+{% load static %}
 {% block content %}
 
 <div class="max-w-lg mx-auto bg-white p-6 shadow rounded-lg mt-10">
 
-    <h1 class="text-2xl font-bold mb-4 text-gray-800">➕ Agregar Producto</h1>
+    <h1 class="text-2xl font-bold mb-6 text-gray-800">➕ Agregar Producto</h1>
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
         {% csrf_token %}
 
-        <label class="block font-semibold mb-1">Nombre del Producto:</label>
-        <input type="text" name="nombre" class="w-full border p-2 rounded mb-4" required>
+        <div>
+            <label class="block font-semibold mb-1">Nombre del Producto:</label>
+            <input type="text" name="nombre" class="w-full border p-2 rounded" required>
+        </div>
 
-        <label class="block font-semibold mb-1">Precio:</label>
-        <input type="number" name="precio" class="w-full border p-2 rounded mb-4" required>
+        <div>
+            <label class="block font-semibold mb-1">Descripción:</label>
+            <textarea name="descripcion" class="w-full border p-2 rounded" rows="2"></textarea>
+        </div>
 
-        <label class="block font-semibold mb-1">Stock:</label>
-        <input type="number" name="stock" class="w-full border p-2 rounded mb-4" required>
+        <div>
+            <label class="block font-semibold mb-1">Tipo:</label>
+            <select name="tipo" class="w-full border p-2 rounded">
+                <option value="venta">Venta al Cliente</option>
+                <option value="insumo">Consumo Interno</option>
+            </select>
+        </div>
 
-        <label class="block font-semibold mb-1">Código de Barra:</label>
-        <input type="text" name="codigo_barra" class="w-full border p-2 rounded mb-4" required>
+        <div>
+            <label class="block font-semibold mb-1">Precio ($):</label>
+            <input type="number" name="precio" class="w-full border p-2 rounded" required>
+        </div>
 
-        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+        <div>
+            <label class="block font-semibold mb-1">Stock:</label>
+            <input type="number" name="stock" class="w-full border p-2 rounded" required>
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1">Stock Mínimo (para alerta):</label>
+            <input type="number" name="stock_minimo" value="5" class="w-full border p-2 rounded">
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1">Código de Barra:</label>
+            <input type="text" name="codigo_barra" class="w-full border p-2 rounded" required>
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1">Unidad (und / ml / gr):</label>
+            <input type="text" name="unidad" value="und" class="w-full border p-2 rounded">
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1">Imagen del Producto:</label>
+            <input type="file" name="imagen" class="w-full border p-2 rounded">
+        </div>
+
+        <button class="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-black font-semibold py-2 rounded transition">
             Guardar Producto
         </button>
+
     </form>
+
+    <a href="{% url 'inventario' %}"
+       class="block text-center mt-4 text-sm text-gray-600 hover:text-gray-900 transition">
+       ← Volver al Inventario
+    </a>
 
 </div>
 

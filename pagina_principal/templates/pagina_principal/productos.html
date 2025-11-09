@@ -1,62 +1,52 @@
 {% extends "pagina_principal/layout.html" %}
+{% load static %}
 {% block content %}
 
 <section class="py-20">
-  <div class="max-w-6xl mx-auto px-6">
-    
+  <div class="max-w-7xl mx-auto px-6">
+
     <h1 class="text-4xl font-bold text-center mb-12">Productos Disponibles</h1>
 
     <p class="text-center text-gray-300 max-w-2xl mx-auto mb-14">
-      Compra online y retira directamente en Salón Vualá (Oriente 1078, Río Bueno).
-      Paga en tienda al retirar.
+      Compra online y retira directamente en Salón Vualá (Oriente 1078, Río Bueno). Paga al retirar.
     </p>
 
-    <!-- GRID DE PRODUCTOS -->
-    <div class="grid md:grid-cols-3 gap-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-      <!-- Producto 1 -->
-      <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-lg text-center">
-        <img src="/static/pagina_principal/img/producto1.jpg" class="w-full h-56 object-cover rounded mb-4">
-        <h3 class="text-xl font-semibold">Kit Cuidado Capilar Premium</h3>
-        <p class="text-gray-400 text-sm mt-2">Shampoo + Acondicionador + Mascarilla</p>
-        <p class="text-gray-200 font-bold text-lg mt-4">$18.000</p>
-        <a href="/reservar/" class="px-4 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
-  Agendar cortes / color
-</a>
+      {% for p in productos %}
+      <div class="bg-neutral-900 border border-neutral-800 p-5 rounded-lg text-center hover:border-[var(--accent)] transition">
+
+        {% if p.imagen %}
+<div class="w-full h-60 bg-black flex items-center justify-center rounded mb-4">
+  <img src="{{ p.imagen.url }}" class="max-h-full object-contain">
+</div>
+{% else %}
+<div class="w-full h-60 bg-black flex items-center justify-center rounded mb-4">
+  <img src="{% static 'pagina_principal/img/no-image.png' %}" class="max-h-full object-contain opacity-40">
+</div>
+{% endif %}
+
+
+        <h3 class="text-lg font-semibold">{{ p.nombre }}</h3>
+        <p class="text-gray-400 text-sm mt-1">{{ p.descripcion }}</p>
+
+        <p class="text-[var(--accent)] font-bold text-xl mt-4">${{ p.precio|floatformat:0 }}</p>
+
+        <button 
+  onclick="agregarCarrito('{{ p.id }}', '{{ p.nombre|escapejs }}', '{{ p.precio }}')"
+  class="mt-4 w-full px-4 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)] transition">
+  Añadir al carrito
+</button>
+
 
       </div>
+      {% endfor %}
 
-      <!-- Producto 2 -->
-      <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-lg text-center">
-        <img src="/static/pagina_principal/img/producto2.jpg" class="w-full h-56 object-cover rounded mb-4">
-        <h3 class="text-xl font-semibold">Spray Volumen Profesional</h3>
-        <p class="text-gray-400 text-sm mt-2">Ideal para peinados y acabado</p>
-        <p class="text-gray-200 font-bold text-lg mt-4">$12.000</p>
-        <a href="/agenda/" class="block bg-yellow-400 text-black py-2 mt-6 rounded hover:bg-yellow-500">
-          Reservar / Retirar en Tienda
-        </a>
-      </div>
-
-      <!-- Producto 3 -->
-      <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-lg text-center">
-        <img src="/static/pagina_principal/img/producto3.jpg" class="w-full h-56 object-cover rounded mb-4">
-        <h3 class="text-xl font-semibold">Aceite Capilar Nutritivo</h3>
-        <p class="text-gray-400 text-sm mt-2">Suaviza y da brillo natural</p>
-        <p class="text-gray-200 font-bold text-lg mt-4">$15.000</p>
-        <a href="/agenda/" class="block bg-yellow-400 text-black py-2 mt-6 rounded hover:bg-yellow-500">
-          Reservar / Retirar en Tienda
-        </a>
-      </div>
-
-    </div>
-
-    <div class="text-center mt-14">
-      <a href="/agenda/" class="text-yellow-400 underline text-lg">
-        ¿Deseas asesoría para tu tipo de cabello?
-      </a>
     </div>
 
   </div>
 </section>
+
+<script src="{% static 'pagina_principal/js/carrito.js' %}"></script>
 
 {% endblock %}

@@ -16,7 +16,6 @@ Including another URLconf
 """
 
 from django.urls import path
-from . import views as inicio_views
 from .views import dashboard
 
 urlpatterns = [

@@ -1,4 +1,5 @@
-{% extends 'inicio/index.html' %}
+{% extends "inicio/base_dashboard.html" %}
+
 
 {% block content %}
 <div class="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
@@ -77,61 +78,51 @@
         </div>
 
         <div class="bg-white shadow-xl rounded-lg p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-1">Productos (5)</h2>
-            <p class="text-sm text-gray-500 mb-4 border-b pb-3">Lista completa del inventario</p>
-            
-            <div class="flex justify-between items-center py-4 border-b hover:bg-red-50/50 transition duration-200 px-2 -mx-2 rounded-lg cursor-pointer">
-                <div class="flex items-center space-x-4">
-                    <span class="text-2xl text-red-500">🚨</span>
-                    <div>
-                        <p class="font-semibold text-lg text-gray-900">Shampoo L'Oréal Professional</p>
-                        <div class="flex space-x-2 items-center text-sm">
-                            <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full font-medium">Shampoo</span>
-                            <span class="bg-red-500 text-white px-2 py-0.5 rounded-full font-bold uppercase text-xs">Crítico</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-right text-sm text-gray-500">
-                    <p>Stock: 1 unidad</p>
-                    <p>Actualizado: <span class="font-medium">16-01-2024</span></p>
-                </div>
-            </div>
+<h2 class="text-xl font-bold text-gray-800 mb-1">Productos ({{ productos.count }})</h2>
+<p class="text-sm text-gray-500 mb-4 border-b pb-3">Lista completa del inventario</p>
 
-            <div class="flex justify-between items-center py-4 border-b hover:bg-yellow-50/50 transition duration-200 px-2 -mx-2 rounded-lg cursor-pointer">
-                <div class="flex items-center space-x-4">
-                    <span class="text-2xl text-yellow-500">📦</span>
-                    <div>
-                        <p class="font-semibold text-lg text-gray-900">Acondicionador Kérastase</p>
-                        <div class="flex space-x-2 items-center text-sm">
-                            <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full font-medium">Acondicionador</span>
-                            <span class="bg-yellow-500 text-white px-2 py-0.5 rounded-full font-bold uppercase text-xs">Bajo</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-right text-sm text-gray-500">
-                    <p>Stock: 5 unidades</p>
-                    <p>Actualizado: <span class="font-medium">01-09-2024</span></p>
-                </div>
-            </div>
-            
-            <div class="flex justify-between items-center py-4 hover:bg-green-50/50 transition duration-200 px-2 -mx-2 rounded-lg cursor-pointer">
-                <div class="flex items-center space-x-4">
-                    <span class="text-2xl text-green-500">✅</span>
-                    <div>
-                        <p class="font-semibold text-lg text-gray-900">Spray Fijación Wella</p>
-                        <div class="flex space-x-2 items-center text-sm">
-                            <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full font-medium">Styling</span>
-                            <span class="bg-green-500 text-white px-2 py-0.5 rounded-full font-bold uppercase text-xs">Alto</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-right text-sm text-gray-500">
-                    <p>Stock: 25 unidades</p>
-                    <p>Actualizado: <span class="font-medium">20-10-2024</span></p>
-                </div>
-            </div>
+{% for p in productos %}
 
+<div class="flex justify-between items-center py-4 border-b hover:bg-gray-50 transition duration-200 px-2 -mx-2 rounded-lg cursor-pointer">
+
+    <div class="flex items-center space-x-4">
+        {% if p.stock <= p.stock_minimo %}
+            <span class="text-2xl text-red-500">🚨</span>
+        {% elif p.stock <= p.stock_minimo|add:3 %}
+            <span class="text-2xl text-yellow-500">📦</span>
+        {% else %}
+            <span class="text-2xl text-green-500">✅</span>
+        {% endif %}
+
+        <div>
+            <p class="font-semibold text-lg text-gray-900">{{ p.nombre }}</p>
+            <div class="flex space-x-2 items-center text-sm">
+                <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full font-medium">{{ p.get_tipo_display }}</span>
+
+                {% if p.stock <= p.stock_minimo %}
+                    <span class="bg-red-500 text-white px-2 py-0.5 rounded-full font-bold uppercase text-xs">Crítico</span>
+                {% elif p.stock <= p.stock_minimo|add:3 %}
+                    <span class="bg-yellow-500 text-white px-2 py-0.5 rounded-full font-bold uppercase text-xs">Bajo</span>
+                {% else %}
+                    <span class="bg-green-500 text-white px-2 py-0.5 rounded-full font-bold uppercase text-xs">Alto</span>
+                {% endif %}
+            </div>
         </div>
+    </div>
+
+    <div class="text-right text-sm text-gray-500">
+        <p>Stock: {{ p.stock }} unidades</p>
+        <p>Código: <span class="font-medium">{{ p.codigo_barra }}</span></p>
+    </div>
+
+</div>
+
+{% empty %}
+<div class="text-center py-10 text-gray-500">
+    No hay productos registrados aún.
+</div>
+{% endfor %}
+
 
     </div>
 </div>
