@@ -21,8 +21,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")  # ✅ Seguro para p
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"           # ✅ Cambia automáticamente en Railway
 
-ALLOWED_HOSTS = ["*"]  # ✅ Luego lo restringimos cuando tengas dominio
+ALLOWED_HOSTS = ["localhost",
+    "127.0.0.1",
+    "salonvuala-production.up.railway.app",]  # ✅ Luego lo restringimos cuando tengas dominio
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://salonvuala-production.up.railway.app"
+]
 
 # ----------------------
 # APPS DEL PROYECTO
