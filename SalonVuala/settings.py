@@ -11,28 +11,22 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from pathlib import Path
 import os
+import dj_database_url
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")  # ✅ Seguro para producción
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+DEBUG = os.environ.get("DEBUG", "False") == "True"           # ✅ Cambia automáticamente en Railway
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-pk3#i+y6qjbc1dl=nt46pkm0j$vz0g22*o!n6$d_3@8vjfysq$'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]  # ✅ Luego lo restringimos cuando tengas dominio
 
 
-
-
-# Application definition
-
+# ----------------------
+# APPS DEL PROYECTO
+# ----------------------
 INSTALLED_APPS = [
     'agenda',
     'configuracion',
@@ -51,8 +45,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+
+# ----------------------
+# MIDDLEWARE
+# ----------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ Manejo de estáticos en Railway
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -61,12 +60,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'SalonVuala.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],  # ✅ para más flexibilidad
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,76 +80,63 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'SalonVuala.wsgi.application'
-AUTH_USER_MODEL = 'usuarios.Usuarios'
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-#BASE DE DATOS DE SQLLITE POR DEFECTO DE DJANGO LUEGO PODEMOS CAMBIARLA A POSTGRESQL O MYSQL SI ES NECESARIO O SEGUN 
-# EL SERVIDOR DONDE SE IMPLANTE
+# ----------------------
+# BASE DE DATOS (Railway)
+# ----------------------
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 
+# ----------------------
+# AUTH USER PERSONALIZADO
+# ----------------------
+AUTH_USER_MODEL = 'usuarios.Usuarios'
 
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
+# ----------------------
+# VALIDACIÓN DE CONTRASEÑAS
+# ----------------------
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
+# ----------------------
+# REGIONALIZACIÓN
+# ----------------------
 LANGUAGE_CODE = 'es-cl'
-
 TIME_ZONE = 'America/Santiago'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-
+# ----------------------
+# STATIC + MEDIA
+# ----------------------
 STATIC_URL = '/static/'
 
-# Carpeta donde guardas archivos estáticos mientras desarrollas
 STATICFILES_DIRS = [
     BASE_DIR / "pagina_principal" / "static",
 ]
 
-# Carpeta donde se recopilarán los estáticos en producción (no se usa en dev)
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-
-# Media (para imágenes subidas)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
+# ✅ Permite servir estáticos comprimidos en producción
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
