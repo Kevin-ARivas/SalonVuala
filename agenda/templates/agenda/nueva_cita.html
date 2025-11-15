@@ -9,17 +9,17 @@
 
     <div>
       <label class="block font-semibold mb-1">Cliente</label>
-      <input name="cliente" type="text" class="w-full border p-2 rounded" required>
+      <input name="cliente" id="cliente" type="text" class="w-full border p-2 rounded" required>
     </div>
 
     <div>
       <label class="block font-semibold mb-1">Teléfono</label>
-      <input name="telefono" type="text" class="w-full border p-2 rounded">
+      <input name="telefono" id="telefono" type="text" class="w-full border p-2 rounded">
     </div>
 
     <div>
       <label class="block font-semibold mb-1">Servicio</label>
-      <select name="servicio" class="w-full border p-2 rounded" required>
+      <select name="servicio" id="servicio" class="w-full border p-2 rounded" required>
         {% for s in servicios %}
           <option value="{{ s.id }}">{{ s.nombre }} - ${{ s.precio }}</option>
         {% endfor %}
@@ -28,7 +28,7 @@
 
     <div>
       <label class="block font-semibold mb-1">Estilista</label>
-      <select name="estilista" class="w-full border p-2 rounded" required>
+      <select name="estilista" id="estilista" class="w-full border p-2 rounded" required>
         {% for u in estilistas %}
           <option value="{{ u.id }}">{{ u.first_name|default:u.username }}</option>
         {% endfor %}
@@ -38,11 +38,14 @@
     <div class="grid grid-cols-2 gap-4">
       <div>
         <label class="block font-semibold mb-1">Fecha</label>
-        <input type="date" name="fecha" class="w-full border p-2 rounded" required>
+        <input type="date" name="fecha" id="fecha" class="w-full border p-2 rounded" required>
       </div>
+
       <div>
         <label class="block font-semibold mb-1">Hora</label>
-        <input type="time" name="hora" class="w-full border p-2 rounded" required>
+        <select name="hora" id="hora" class="w-full border p-2 rounded" required>
+          <option value="">Selecciona servicio/fecha/estilista</option>
+        </select>
       </div>
     </div>
 
@@ -54,4 +57,43 @@
   </form>
 </div>
 
+<script>
+function actualizarHoras() {
+    const servicio  = document.getElementById("servicio").value;
+    const estilista = document.getElementById("estilista").value;
+    const fecha     = document.getElementById("fecha").value;
+
+    if (!servicio || !estilista || !fecha) return;
+
+    // 👇 AQUÍ USAMOS BACKTICKS ( ` ) NO COMILLAS SIMPLES
+    fetch(`/agenda/obtener_horas/?servicio=${servicio}&estilista=${estilista}&fecha=${fecha}`)
+        .then(resp => resp.json())
+        .then(data => {
+            const horaSelect = document.getElementById("hora");
+            horaSelect.innerHTML = "";
+
+            if (!data.horas || data.horas.length === 0) {
+                horaSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
+                return;
+            }
+
+            data.horas.forEach(function(h) {
+                // 👇 AQUÍ TAMBIÉN USAMOS BACKTICKS
+                horaSelect.innerHTML += `<option value="${h}">${h}</option>`;
+            });
+        })
+        .catch(err => {
+            console.error("Error al obtener horas:", err);
+            const horaSelect = document.getElementById("hora");
+            horaSelect.innerHTML = '<option value="">Error al cargar horas</option>';
+        });
+}
+
+// Esperar que el DOM esté listo antes de enganchar los eventos
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("servicio").addEventListener("change", actualizarHoras);
+    document.getElementById("estilista").addEventListener("change", actualizarHoras);
+    document.getElementById("fecha").addEventListener("change", actualizarHoras);
+});
+</script>
 {% endblock %}

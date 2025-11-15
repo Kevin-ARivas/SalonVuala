@@ -2,57 +2,72 @@ from django.shortcuts import render, redirect, get_object_or_404
 from agenda.models import Servicio, Cita
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from datetime import date
+from datetime import date, timedelta, datetime, time
+from django.http import JsonResponse
 
 User = get_user_model()
-# -----------------------------
-#   CITAS (Vista principal)
-# -----------------------------
 
+
+# ======================================================
+#   📅 VISTA PRINCIPAL DE CITAS + CALENDARIO SEMANAL
+# ======================================================
 @login_required
 def citas(request):
-    # Obtener fecha seleccionada, si no usar la de hoy
-    fecha = request.GET.get('fecha', date.today())
 
-    # Obtener estilista seleccionado (si existe)
+    # FECHA SEGURA
+    fecha_str = request.GET.get("fecha")
+    try:
+        fecha = datetime.strptime(fecha_str, "%Y-%m-%d").date() if fecha_str else date.today()
+    except:
+        fecha = date.today()
+
+    # SEMANA SHIFT
+    shift = int(request.GET.get("semana", 0))
+    fecha = fecha + timedelta(days=7 * shift)
+
+    # SEMANA LUN → DOM
+    inicio_semana = fecha - timedelta(days=fecha.weekday())
+    semana = [inicio_semana + timedelta(days=i) for i in range(7)]
+
+    # FILTRO ESTILISTA
     estilista_id = request.GET.get('estilista')
 
-    # Obtener lista completa de estilistas
-    estilistas = User.objects.filter(is_active=True)
-
-    # Filtrar citas por fecha
     citas = Cita.objects.filter(fecha=fecha)
-
-    # Si seleccionó estilista, filtrar también
     if estilista_id:
         citas = citas.filter(estilista_id=estilista_id)
 
-    # Contadores para resumen
     total = citas.count()
     confirmadas = citas.filter(estado='confirmada').count()
     pendientes = citas.filter(estado='pendiente').count()
 
+    citas_por_dia = {
+        d: Cita.objects.filter(fecha=d).count()
+        for d in semana
+    }
+
     return render(request, 'agenda/citas.html', {
-        'citas': citas,
-        'estilistas': estilistas,
-        'fecha': fecha,
-        'total': total,
-        'confirmadas': confirmadas,
-        'pendientes': pendientes
+        "fecha": fecha,
+        "hoy": date.today(),
+        "semana": semana,
+        "citas": citas,
+        "estilistas": User.objects.filter(is_active=True),
+        "citas_por_dia": citas_por_dia,
+        "total": total,
+        "confirmadas": confirmadas,
+        "pendientes": pendientes
     })
 
-# -----------------------------
-#   LISTA DE SERVICIOS (CRUD)
-# -----------------------------
+
+# ======================================================
+#   CRUD SERVICIOS
+# ======================================================
+
 @login_required
 def lista_servicios(request):
     servicios = Servicio.objects.all()
     return render(request, 'agenda/servicios.html', {'servicios': servicios})
 
 
-# -----------------------------
-#   CREAR SERVICIO
-# -----------------------------
 @login_required
 def agregar_servicio(request):
     if request.method == 'POST':
@@ -67,9 +82,6 @@ def agregar_servicio(request):
     return render(request, 'agenda/agregar_servicio.html')
 
 
-# -----------------------------
-#   EDITAR SERVICIO
-# -----------------------------
 @login_required
 def editar_servicio(request, id):
     servicio = get_object_or_404(Servicio, id=id)
@@ -85,9 +97,6 @@ def editar_servicio(request, id):
     return render(request, 'agenda/editar_servicio.html', {'servicio': servicio})
 
 
-# -----------------------------
-#   ELIMINAR SERVICIO
-# -----------------------------
 @login_required
 def eliminar_servicio(request, id):
     servicio = get_object_or_404(Servicio, id=id)
@@ -95,28 +104,76 @@ def eliminar_servicio(request, id):
     return redirect('lista_servicios')
 
 
+# ======================================================
+#   ✨ NUEVA CITA
+# ======================================================
+def generar_horas(duracion, citas_existentes):
+    inicio = time(10, 0)
+    fin    = time(20, 0)
 
-# ======================================================
-#   🟣 CREAR NUEVA CITA
-# ======================================================
+    horas = []
+    actual = datetime.combine(datetime.today(), inicio)
+    limite = datetime.combine(datetime.today(), fin)
+
+    while actual <= limite:
+        hora_actual = actual.time()  # 👈 AHORA ES OBJETO time()
+
+        ocupada = False
+        for cita in citas_existentes:
+            fin_cita_dt = datetime.combine(datetime.today(), cita.hora) + timedelta(minutes=cita.servicio.duracion)
+            fin_cita = fin_cita_dt.time()
+
+            if cita.hora <= hora_actual < fin_cita:
+                ocupada = True
+                break
+
+        if not ocupada:
+            horas.append(hora_actual)  # 👈 SE GUARDA COMO time(), NO STRING
+
+        actual += timedelta(minutes=duracion)
+
+    return horas
+
+@login_required
+def obtener_horas(request):
+    servicio_id = request.GET.get("servicio")
+    estilista_id = request.GET.get("estilista")
+    fecha = request.GET.get("fecha")
+
+    if not servicio_id or not estilista_id or not fecha:
+        return JsonResponse({"horas": []})
+
+    servicio = Servicio.objects.get(id=servicio_id)
+
+    citas_existentes = Cita.objects.filter(
+        fecha=fecha,
+        estilista_id=estilista_id
+    )
+
+    horas = generar_horas(servicio.duracion, citas_existentes)
+
+    # 👇 AQUÍ OCURRÍA TU ERROR
+    horas_str = [h.strftime("%H:%M") for h in horas]  
+
+    return JsonResponse({"horas": horas_str})
+
 @login_required
 def nueva_cita(request):
     servicios = Servicio.objects.all()
-    estilistas = User.objects.filter(is_active=True)  # ✅ Admin y trabajadores
+    estilistas = User.objects.filter(is_active=True)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         Cita.objects.create(
-            cliente=request.POST['cliente'],
-            telefono=request.POST['telefono'],
-            servicio_id=request.POST['servicio'],
-            estilista_id=request.POST['estilista'],
-            fecha=request.POST['fecha'],
-            hora=request.POST['hora'],
+            cliente       = request.POST["cliente"],
+            telefono      = request.POST["telefono"],
+            servicio_id   = request.POST["servicio"],
+            estilista_id  = request.POST["estilista"],
+            fecha         = request.POST["fecha"],
+            hora          = request.POST["hora"],
         )
-        return redirect('citas')
+        return redirect("citas")
 
-    return render(request, 'agenda/nueva_cita.html', {
-        'servicios': servicios,
-        'estilistas': estilistas
+    return render(request, "agenda/nueva_cita.html", {
+        "servicios": servicios,
+        "estilistas": estilistas,
     })
-

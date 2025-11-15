@@ -1,0 +1,101 @@
+{% extends "inicio/base_dashboard.html" %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8 mt-10">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">✏️ Editar Producto</h1>
+
+    <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+
+        <div>
+            <label class="block font-semibold text-gray-700 mb-1">Nombre</label>
+            <input type="text" name="nombre" value="{{ producto.nombre }}" required
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500">
+        </div>
+
+        <div>
+            <label class="block font-semibold text-gray-700 mb-1">Descripción</label>
+            <textarea name="descripcion" rows="3"
+                      class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500">{{ producto.descripcion }}</textarea>
+        </div>
+
+        <div>
+            <label class="block font-semibold text-gray-700 mb-1">Tipo</label>
+            <select name="tipo"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500">
+                <option value="venta" {% if producto.tipo == "venta" %}selected{% endif %}>Venta al Cliente</option>
+                <option value="insumo" {% if producto.tipo == "insumo" %}selected{% endif %}>Consumo Interno</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-semibold text-gray-700 mb-1">Categoría</label>
+            <select name="categoria"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500">
+                <option value="shampoo" {% if producto.categoria == "shampoo" %}selected{% endif %}>Shampoo</option>
+                <option value="acondicionador" {% if producto.categoria == "acondicionador" %}selected{% endif %}>Acondicionador</option>
+                <option value="mascarilla" {% if producto.categoria == "mascarilla" %}selected{% endif %}>Mascarilla</option>
+                <option value="aceite" {% if producto.categoria == "aceite" %}selected{% endif %}>Aceite</option>
+                <option value="otro" {% if producto.categoria == "otro" %}selected{% endif %}>Otro</option>
+            </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block font-semibold text-gray-700 mb-1">Precio</label>
+                <input type="number" name="precio" required value="{{ producto.precio }}"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500">
+            </div>
+
+            <div>
+                <label class="block font-semibold text-gray-700 mb-1">Unidad</label>
+                <input type="text" name="unidad" value="{{ producto.unidad }}"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block font-semibold text-gray-700 mb-1">Stock</label>
+                <input type="number" name="stock" required value="{{ producto.stock }}"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500">
+            </div>
+
+            <div>
+                <label class="block font-semibold text-gray-700 mb-1">Stock mínimo</label>
+                <input type="number" name="stock_minimo" value="{{ producto.stock_minimo }}"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500">
+            </div>
+        </div>
+
+        <div>
+            <label class="block font-semibold text-gray-700 mb-1">Código de barra</label>
+            <input type="text" name="codigo_barra" required value="{{ producto.codigo_barra }}"
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500">
+        </div>
+
+        <div>
+            <label class="block font-semibold text-gray-700 mb-1">Imagen (opcional)</label>
+            {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" alt="Imagen actual" class="h-24 mb-2 rounded">
+            {% endif %}
+            <input type="file" name="imagen" accept="image/*"
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2">
+        </div>
+
+        <div class="flex justify-between mt-6">
+            <a href="{% url 'inventario' %}"
+               class="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 font-semibold hover:bg-gray-400">
+                ← Volver
+            </a>
+
+            <button class="px-6 py-2 rounded-lg bg-pink-600 text-white font-bold hover:bg-pink-700">
+                Guardar Cambios
+            </button>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

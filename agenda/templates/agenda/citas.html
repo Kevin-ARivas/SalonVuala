@@ -18,7 +18,7 @@
                         <h2 class="font-bold text-lg text-gray-800">Seleccionar Fecha</h2>
                         <span class="text-gray-500">🗓</span>
                     </div>
-                    <input type="date" name="fecha" value="{{ fecha }}"
+                    <input type="date" name="fecha" value="{{ fecha|date:'Y-m-d'}}"
                         onchange="this.form.submit()"
                         class="w-full border-2 border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2 transition">
                 </div>
@@ -60,6 +60,55 @@
                     + Nueva Cita
                 </a>
             </div>
+
+<!-- CONTROLES DE SEMANA -->
+<div class="flex justify-between items-center mb-4">
+    <a href="?fecha={{ fecha|date:'Y-m-d' }}&semana=-1"
+       class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-xl transition font-semibold">
+        ← Semana Anterior
+    </a>
+
+    <p class="font-bold text-lg text-gray-700 animate-fade">
+        Semana del {{ semana.0|date:"d" }} al {{ semana.6|date:"d M" }}
+    </p>
+
+    <a href="?fecha={{ fecha|date:'Y-m-d' }}&semana=1"
+       class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-xl transition font-semibold">
+        Semana Siguiente →
+    </a>
+</div>
+
+<!-- CALENDARIO SEMANAL -->
+<div class="grid grid-cols-7 gap-3 mb-6">
+
+    {% for d in semana %}
+        {% with count=citas_por_dia.d %}
+        <a href="?fecha={{ d|date:'Y-m-d' }}"
+           class="flex flex-col items-center p-4 rounded-xl border transition-all duration-300 transform hover:-translate-y-1
+                {% if d == fecha %}
+                    bg-pink-600 text-white border-pink-600 shadow-xl scale-105
+                {% elif d == hoy %}
+                    bg-pink-100 text-pink-700 border-pink-300 shadow-md
+                {% else %}
+                    bg-gray-100 text-gray-700 border-gray-300 hover:shadow-lg
+                {% endif %}">
+
+            <span class="text-xs font-bold uppercase opacity-70">{{ d|date:"D" }}</span>
+
+            <span class="text-2xl font-extrabold mt-1">
+                {{ d|date:"d" }}
+            </span>
+
+            {% if count > 0 %}
+                <span class="mt-2 text-xs font-semibold text-green-600">
+                    {{ count }} citas
+                </span>
+            {% endif %}
+
+        </a>
+        {% endwith %}
+    {% endfor %}
+</div>
 
             <div class="flex items-center mb-6">
                 <span class="text-2xl text-gray-500 mr-3">🕒</span>

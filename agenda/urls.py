@@ -21,6 +21,8 @@ urlpatterns = [
     path('citas/', views.citas, name='citas'),
     path('citas/nueva/', views.nueva_cita, name='nueva_cita'),
 
+    path('obtener_horas/', views.obtener_horas, name='obtener_horas'),
+
     # CRUD SERVICIOS
     path('servicios/', views.lista_servicios, name='lista_servicios'),
     path('servicios/agregar/', views.agregar_servicio, name='agregar_servicio'),
