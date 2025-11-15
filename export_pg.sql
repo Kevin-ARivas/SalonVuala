@@ -1,0 +1,15 @@
+TRUNCATE agenda_cita,
+agenda_servicio,
+auth_group,
+auth_group_permissions,
+auth_permission,
+django_admin_log,
+django_content_type,
+django_migrations,
+django_session,
+finanzas_venta,
+inventario_producto,
+usuarios_usuarios,
+usuarios_usuarios_groups,
+usuarios_usuarios_user_permissions
+RESTART IDENTITY CASCADE;
