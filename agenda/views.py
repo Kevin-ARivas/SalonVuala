@@ -177,3 +177,45 @@ def nueva_cita(request):
         "servicios": servicios,
         "estilistas": estilistas,
     })
+
+@login_required
+def confirmar_cita(request, id):
+    cita = get_object_or_404(Cita, id=id)
+    cita.estado = "confirmada"
+    cita.save()
+    return redirect("citas")
+
+@login_required
+def editar_cita(request, id):
+    cita = get_object_or_404(Cita, id=id)
+    servicios = Servicio.objects.all()
+    estilistas = User.objects.filter(is_active=True)
+
+    if request.method == "POST":
+        cita.cliente = request.POST["cliente"]
+        cita.telefono = request.POST["telefono"]
+        cita.servicio_id = request.POST["servicio"]
+        cita.estilista_id = request.POST["estilista"]
+        cita.fecha = request.POST["fecha"]
+        cita.hora = request.POST["hora"]
+        cita.save()
+        return redirect("citas")
+
+    return render(request, "agenda/editar_cita.html", {
+        "cita": cita,
+        "servicios": servicios,
+        "estilistas": estilistas,
+    })
+
+@login_required
+def eliminar_cita(request, id):
+    cita = get_object_or_404(Cita, id=id)
+    cita.delete()
+    return redirect("citas")
+
+@login_required
+def pendiente_cita(request, id):
+    cita = get_object_or_404(Cita, id=id)
+    cita.estado = "pendiente"
+    cita.save()
+    return redirect("citas")

@@ -28,5 +28,12 @@ urlpatterns = [
     path('servicios/agregar/', views.agregar_servicio, name='agregar_servicio'),
     path('servicios/editar/<int:id>/', views.editar_servicio, name='editar_servicio'),
     path('servicios/eliminar/<int:id>/', views.eliminar_servicio, name='eliminar_servicio'),
+
+
+    path("citas/confirmar/<int:id>/", views.confirmar_cita, name="confirmar_cita"),
+    path("citas/pendiente/<int:id>/", views.pendiente_cita, name="pendiente_cita"),
+
+    path("citas/editar/<int:id>/", views.editar_cita, name="editar_cita"),
+    path("citas/eliminar/<int:id>/", views.eliminar_cita, name="eliminar_cita"),
 ]
 

@@ -147,9 +147,32 @@
                     <div class="mt-4 md:mt-0 text-left md:text-right">
                         <p class="font-extrabold text-2xl text-pink-600">${{ c.servicio.precio }}</p>
                         <div class="flex gap-3 mt-2 justify-start md:justify-end">
-                            <a href="{% url 'editar_cita' c.id %}" class="text-gray-400 hover:text-blue-500 transition p-2 rounded-full hover:bg-gray-100">✏️</a>
-                            <a href="{% url 'eliminar_cita' c.id %}" class="text-gray-400 hover:text-red-500 transition p-2 rounded-full hover:bg-gray-100">🗑️</a>
-                        </div>
+                                <!-- ✏ EDITAR -->
+    <a href="{% url 'editar_cita' c.id %}"
+       class="text-gray-400 hover:text-blue-500 transition p-2 rounded-full hover:bg-gray-100">
+        ✏️
+    </a>
+
+    <!-- ✔ CONFIRMAR o ⏳ PENDIENTE -->
+    {% if c.estado == 'pendiente' %}
+        <a href="{% url 'confirmar_cita' c.id %}"
+           class="text-gray-400 hover:text-green-500 transition p-2 rounded-full hover:bg-gray-100">
+            ✔️
+        </a>
+    {% else %}
+        <a href="{% url 'pendiente_cita' c.id %}"
+           class="text-gray-400 hover:text-yellow-500 transition p-2 rounded-full hover:bg-gray-100">
+            ⏳
+        </a>
+    {% endif %}
+
+    <!-- 🗑 ELIMINAR -->
+    <a href="{% url 'eliminar_cita' c.id %}"
+       class="text-gray-400 hover:text-red-500 transition p-2 rounded-full hover:bg-gray-100">
+        🗑️
+    </a>
+
+</div>
                     </div>
 
                 </div>
