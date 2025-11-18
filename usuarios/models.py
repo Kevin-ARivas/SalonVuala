@@ -4,14 +4,22 @@ from django.core.exceptions import ValidationError
 import re
 
 
+# ============================
+# VALIDADORES DE RUT
+# ============================
 
 def validar_formato_rut(value):
     patron = r"^\d{7,8}-[\dkK]$"
     if not re.match(patron, value):
         raise ValidationError("El RUT debe tener el formato 12345678-9")
-    
+
+
 def validar_dv_rut(value):
-    rut, dv = value.split("-")
+    try:
+        rut, dv = value.split("-")
+    except ValueError:
+        raise ValidationError("Formato RUT inválido")
+
     rut = rut[::-1]
     suma = 0
     multiplicador = 2
@@ -21,6 +29,7 @@ def validar_dv_rut(value):
         multiplicador = 2 if multiplicador == 7 else multiplicador + 1
 
     dv_calc = 11 - (suma % 11)
+
     if dv_calc == 11:
         dv_calc = "0"
     elif dv_calc == 10:
@@ -30,14 +39,20 @@ def validar_dv_rut(value):
 
     if dv.upper() != dv_calc:
         raise ValidationError("El dígito verificador es incorrecto")
-    
+
+
+# ============================
+# MODELO DE USUARIO PERSONALIZADO
+# ============================
+
 class Usuarios(AbstractUser):
     rut = models.CharField(
-        max_length=12,
+        max_length=10,
         unique=True,
         validators=[validar_formato_rut, validar_dv_rut],
         help_text="Ingrese un RUT sin puntos. Ej: 12345678-9"
     )
+
     telefono = models.CharField(max_length=13, blank=True, null=True)
 
     tipo_usuario = models.CharField(
@@ -54,6 +69,3 @@ class Usuarios(AbstractUser):
 
     def __str__(self):
         return self.username
-    
-
-
