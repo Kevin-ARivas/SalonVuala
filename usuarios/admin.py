@@ -30,7 +30,7 @@ class CustomUserAdmin(UserAdmin):
         "is_verified",
     )
 
-    # 🔥 Aquí agregamos el campo is_verified
+    
     fieldsets = UserAdmin.fieldsets + (
         ("Información adicional", {
             "fields": ("rut", "telefono", "tipo_usuario", "is_verified")

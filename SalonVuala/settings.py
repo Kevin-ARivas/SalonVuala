@@ -144,3 +144,21 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# ============================================
+# EMAIL – Configuración para verificación
+# ============================================
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# 🔐 Estas claves se guardan en Railway como variables de entorno
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")          # tu correo Gmail
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")  # contraseña de aplicación
+
+# 📤 Gmail no permite enviar sin un remitente válido
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
