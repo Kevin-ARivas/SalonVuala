@@ -12,7 +12,8 @@ class CustomUserAdmin(UserAdmin):
         'telefono',
         'tipo_usuario',
         'is_staff',
-        'is_active'
+        'is_active',
+        "is_verified",
     )
 
     search_fields = (
@@ -25,18 +26,20 @@ class CustomUserAdmin(UserAdmin):
     list_filter = (
         'tipo_usuario',
         'is_staff',
-        'is_active'
+        'is_active',
+        "is_verified",
     )
 
+    # 🔥 Aquí agregamos el campo is_verified
     fieldsets = UserAdmin.fieldsets + (
         ("Información adicional", {
-            "fields": ("rut", "telefono", "tipo_usuario")
+            "fields": ("rut", "telefono", "tipo_usuario", "is_verified")
         }),
     )
 
     add_fieldsets = UserAdmin.add_fieldsets + (
         ("Información adicional", {
-            "fields": ("rut", "telefono", "tipo_usuario")
+            "fields": ("rut", "telefono", "tipo_usuario", "is_verified")
         }),
     )
 
