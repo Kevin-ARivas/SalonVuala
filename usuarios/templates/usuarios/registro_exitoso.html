@@ -1,0 +1,25 @@
+{% extends "pagina_principal/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="min-h-[80vh] flex flex-col items-center justify-center px-6 py-20">
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-10 w-full max-w-md shadow-xl">
+
+        <h1 class="text-3xl font-semibold text-center mb-2">Registro Exitoso</h1>
+        <p class="text-center text-gray-400 mb-6">
+            Te enviamos un correo a <strong>{{ email }}</strong>.
+        </p>
+
+        <p class="text-center text-gray-300 mb-8">
+            Haz clic en el enlace del mensaje para activar tu cuenta.
+        </p>
+
+        <a href="{% url 'login_usuario' %}"
+           class="w-full block text-center bg-[var(--accent)] text-black py-3 rounded hover:bg-[var(--accent-hover)] transition">
+            Volver al Login
+        </a>
+    </div>
+</section>
+
+{% endblock %}

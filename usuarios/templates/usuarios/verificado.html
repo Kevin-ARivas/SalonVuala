@@ -1,0 +1,19 @@
+{% extends "pagina_principal/layout.html" %}
+{% block content %}
+
+<section class="min-h-[80vh] flex flex-col items-center justify-center px-6 py-20">
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-10 w-full max-w-md shadow-xl">
+
+        <h1 class="text-3xl font-semibold text-center mb-4 text-green-400">Cuenta Verificada</h1>
+        <p class="text-gray-300 text-center mb-8">
+            Tu cuenta ha sido verificada correctamente. Ya puedes iniciar sesión.
+        </p>
+
+        <a href="{% url 'login_usuario' %}"
+           class="w-full text-center block bg-[var(--accent)] text-black py-3 rounded hover:bg-[var(--accent-hover)] transition">
+            Iniciar Sesión
+        </a>
+    </div>
+</section>
+
+{% endblock %}

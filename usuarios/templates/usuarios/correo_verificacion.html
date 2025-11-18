@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px;">
+    <div style="background: #ffffff; padding: 20px; border-radius: 8px; max-width: 500px; margin: auto;">
+        <h2 style="color: #111;">Verifica tu cuenta</h2>
+
+        <p>Hola {{ usuario.username }},</p>
+
+        <p>Gracias por registrarte en <strong>Salón Vualá</strong>. Antes de continuar, debes verificar tu correo electrónico.</p>
+
+        <p style="margin: 30px 0;">
+            <a href="{{ link }}" 
+               style="background: #ff3cac; color: white; padding: 12px 20px; 
+               text-decoration: none; border-radius: 6px; display: inline-block;">
+                Verificar mi cuenta
+            </a>
+        </p>
+
+        <p>Si no solicitaste esta cuenta, simplemente ignora este correo.</p>
+
+        <p style="margin-top: 30px; font-size: 12px; color: #888;">
+            © {{ now|date:"Y" }} Salón Vualá — Todos los derechos reservados.
+        </p>
+    </div>
+</body>
+</html>
