@@ -8,7 +8,15 @@
 
     <form method="post" class="space-y-4 bg-[#111111] p-6 rounded-lg border border-[#1b1b1b]">
         {% csrf_token %}
-        
+
+        <div>
+            <label class="block text-sm mb-1">RUT</label>
+            {{ form.rut }}
+            {% for error in form.rut.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+
         <div>
             <label class="block text-sm mb-1">Nombre de usuario</label>
             {{ form.username }}
@@ -49,14 +57,17 @@
             {% endfor %}
         </div>
 
-        <button type="submit" class="w-full mt-4 px-5 py-3 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)] transition">
+        <button type="submit"
+            class="w-full mt-4 px-5 py-3 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)] transition">
             Registrarse
         </button>
     </form>
 
     <p class="text-center text-sm text-[#888] mt-4">
         ¿Ya tienes una cuenta?
-        <a href="{% url 'login_usuario' %}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] underline">Inicia sesión</a>
+        <a href="{% url 'login_usuario' %}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] underline">
+            Inicia sesión
+        </a>
     </p>
 </section>
 {% endblock %}
