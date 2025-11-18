@@ -163,6 +163,16 @@ def nueva_cita(request):
     estilistas = User.objects.filter(is_active=True)
 
     if request.method == "POST":
+
+        # ⛔ VALIDAR FECHA NO ANTERIOR A HOY
+        fecha = datetime.strptime(request.POST["fecha"], "%Y-%m-%d").date()
+        if fecha < date.today():
+            return render(request, "agenda/nueva_cita.html", {
+                "servicios": servicios,
+                "estilistas": estilistas,
+                "error": "No puedes agendar citas en días anteriores."
+            })
+
         Cita.objects.create(
             cliente       = request.POST["cliente"],
             telefono      = request.POST["telefono"],
