@@ -92,7 +92,9 @@ WSGI_APPLICATION = 'SalonVuala.wsgi.application'
 # BASE DE DATOS (Railway)
 # ----------------------
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    'default': dj_database_url.parse(
+    os.environ.get("DATABASE_URL", "sqlite:///db.sqlite3")
+)
 }
 
 
