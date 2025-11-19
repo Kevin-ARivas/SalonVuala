@@ -59,19 +59,26 @@ def enviar_correo_verificacion(request, usuario):
     link_activacion = f"http://{dominio}/usuarios/activar/{uid}/{token}/"
 
     asunto = "Verifica tu cuenta en Salón Vualá"
-    mensaje = render_to_string("usuarios/correo_verificacion.html", {
+
+    mensaje_texto = (
+        f"Hola {usuario.username}, verifica tu cuenta en el siguiente enlace:\n\n"
+        f"{link_activacion}"
+    )
+
+    mensaje_html = render_to_string("usuarios/correo_verificacion.html", {
         "usuario": usuario,
-        "link": link_activacion
+        "link": link_activacion,
     })
 
     send_mail(
         asunto,
-        "",
+        mensaje_texto,             
         settings.DEFAULT_FROM_EMAIL,
         [usuario.email],
-        fail_silently=False,
-        html_message=mensaje
+        fail_silently=False,       
+        html_message=mensaje_html  
     )
+
 
 
 # ============================================================
