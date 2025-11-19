@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from inventario.models import Producto
+from agenda.models import Servicio
 
 
 def index(request):
     return render(request, 'pagina_principal/index.html')
 
 def servicios(request):
-    return render(request, 'pagina_principal/servicios.html')
+    servicios = Servicio.objects.all()
+    return render(request, 'pagina_principal/servicios.html', {'servicios': servicios})
 
 def matias(request):
     return render(request, 'pagina_principal/matias.html')
