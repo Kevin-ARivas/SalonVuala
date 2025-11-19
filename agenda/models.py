@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings  # ✅ Para usar el usuario correctamente
+from pagina_principal.models import Sucursales
 
 class Servicio(models.Model):
     nombre = models.CharField(max_length=100)
@@ -27,7 +28,7 @@ class Cita(models.Model):
 
     cliente = models.CharField(max_length=120)
     telefono = models.CharField(max_length=20, blank=True, null=True)
-
+    sucursal = models.ForeignKey(Sucursales, on_delete=models.CASCADE, blank=True, null=True)
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
     estilista = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 

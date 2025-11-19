@@ -5,40 +5,54 @@
 <section class="py-20">
   <div class="max-w-7xl mx-auto px-6">
 
-    <h1 class="text-4xl font-bold text-center mb-12">Productos Disponibles</h1>
+    <!-- TÍTULO -->
+    <div class="productos-title-anim mb-12">
+      <h1 class="text-4xl font-bold text-center">Productos Disponibles</h1>
+    </div>
 
-    <p class="text-center text-gray-300 max-w-2xl mx-auto mb-14">
+    <p class="text-center text-gray-300 max-w-2xl mx-auto mb-14 fade-anim-unique">
       Compra online y retira directamente en Salón Vualá (Oriente 1078, Río Bueno). Paga al retirar.
     </p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <!-- GRID DE PRODUCTOS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 productos-grid-anim">
 
       {% for p in productos %}
-      <div class="bg-neutral-900 border border-neutral-800 p-5 rounded-lg text-center hover:border-[var(--accent)] transition">
+      <!-- CONTENEDOR EXTERNO ANIMABLE -->
+      <div class="producto-wrapper-anim">
+        
+        <div class="producto-card-unique bg-neutral-900 border border-neutral-800 p-5 rounded-lg text-center 
+                    hover:border-[var(--accent)] transition flex flex-col h-full">
 
-        {% if p.imagen %}
-<div class="w-full h-60 bg-black flex items-center justify-center rounded mb-4">
-  <img src="{{ p.imagen.url }}" class="max-h-full object-contain">
-</div>
-{% else %}
-<div class="w-full h-60 bg-black flex items-center justify-center rounded mb-4">
-  <img src="{% static 'pagina_principal/img/no-image.png' %}" class="max-h-full object-contain opacity-40">
-</div>
-{% endif %}
+          {% if p.imagen %}
+          <div class="w-full h-60 bg-black flex items-center justify-center rounded mb-4">
+            <img src="{{ p.imagen.url }}" class="max-h-full object-contain">
+          </div>
+          {% else %}
+          <div class="w-full h-60 bg-black flex items-center justify-center rounded mb-4">
+            <img src="{% static 'pagina_principal/img/no-image.png' %}" class="max-h-full object-contain opacity-40">
+          </div>
+          {% endif %}
 
+          <!-- Contenido flexible -->
+          <div class="flex flex-col flex-grow">
+            <h3 class="text-lg font-semibold">{{ p.nombre }}</h3>
+            <p class="text-gray-400 text-sm mt-1 flex-grow">{{ p.descripcion }}</p>
 
-        <h3 class="text-lg font-semibold">{{ p.nombre }}</h3>
-        <p class="text-gray-400 text-sm mt-1">{{ p.descripcion }}</p>
+            <p class="text-[var(--accent)] font-bold text-xl mt-4">
+              ${{ p.precio|floatformat:0 }}
+            </p>
+          </div>
 
-        <p class="text-[var(--accent)] font-bold text-xl mt-4">${{ p.precio|floatformat:0 }}</p>
+          <!-- BOTÓN SIEMPRE ABAJO -->
+          <button
+            onclick="agregarCarrito('{{ p.id }}', '{{ p.nombre|escapejs }}', '{{ p.precio }}')"
+            class="mt-4 w-full px-4 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)] transition"
+          >
+            Añadir al carrito
+          </button>
 
-        <button 
-  onclick="agregarCarrito('{{ p.id }}', '{{ p.nombre|escapejs }}', '{{ p.precio }}')"
-  class="mt-4 w-full px-4 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)] transition">
-  Añadir al carrito
-</button>
-
-
+        </div>
       </div>
       {% endfor %}
 
@@ -48,5 +62,37 @@
 </section>
 
 <script src="{% static 'pagina_principal/js/carrito.js' %}"></script>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<script>
+    // Animación del título
+    gsap.from(".productos-title-anim", {
+        opacity: 0,
+        y: -40,
+        duration: 1,
+        ease: "power3.out"
+    });
+
+    // Animación del texto bajo el título
+    gsap.from(".fade-anim-unique", {
+        opacity: 0,
+        y: 20,
+        delay: 0.2,
+        duration: 1,
+        ease: "power3.out"
+    });
+
+    // Animación en el DIV EXTERIOR (producto-wrapper-anim)
+    gsap.from(".producto-wrapper-anim", {
+        opacity: 0,
+        y: 60,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power3.out",
+        delay: 0.3
+    });
+</script>
 
 {% endblock %}

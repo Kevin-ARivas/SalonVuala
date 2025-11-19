@@ -7,7 +7,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
   <style>
+    :root {
+      --accent: #E6A67A;
+      --accent-hover: #D18A5F;
+    }
+
+    /* Elementos que aparecerán con GSAP */
+    .gsap-fade {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    /* Animación del hero existente */
     @keyframes zoomHero {
       0% { transform: scale(1); }
       100% { transform: scale(1.12); }
@@ -15,32 +31,18 @@
     .animate-zoom {
       animation: zoomHero 20s ease-in-out infinite alternate;
     }
-
-    :root {
-      --accent: #E6A67A;
-      --accent-hover: #D18A5F;
-    }
-
-    .fade {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: .7s ease-out;
-    }
-    .fade.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
   </style>
 </head>
 
 <body class="bg-[#0A0A0A] text-white">
 
 <!-- NAV -->
-<header class="sticky top-0 bg-black/70 backdrop-blur border-b border-[#1b1b1b] z-50">
+<header id="gsap-header"
+        class="sticky top-0 bg-black/70 backdrop-blur border-b border-[#1b1b1b] z-50 opacity-0">
   <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
     <a href="/" class="text-xl font-light tracking-wide">SALÓN VUALÁ</a>
 
-    <nav class="hidden md:flex gap-8 text-sm font-light items-center">
+    <nav id="gsap-nav" class="hidden md:flex gap-8 text-sm font-light items-center opacity-0">
       <a href="/" class="hover:text-[var(--accent)]">Inicio</a>
       <a href="/servicios/" class="hover:text-[var(--accent)]">Servicios</a>
       <a href="/matias/" class="hover:text-[var(--accent)]">Quién es Matías</a>
@@ -62,7 +64,7 @@
 {% block content %}{% endblock %}
 
 <!-- FOOTER -->
-<footer class="text-center text-[#BABABA] border-t border-[#1b1b1b] py-12 mt-20 text-sm">
+<footer class="gsap-fade text-center text-[#BABABA] border-t border-[#1b1b1b] py-12 mt-20 text-sm">
   <div class="mb-4 text-lg text-white font-light">Salón Vualá — Río Bueno</div>
   <p class="mb-2">Oriente 1078, Río Bueno</p>
   <a href="https://www.google.com/maps/search/Oriente+1078,+Río+Bueno" target="_blank"
@@ -76,19 +78,55 @@
 
 <!-- WHATSAPP -->
 <a href="https://wa.me/+569XXXXXXXX" target="_blank"
-   class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-full shadow-xl font-medium transition">
+   class="gsap-fade fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-full shadow-xl font-medium transition">
   WhatsApp
 </a>
 
-<!-- SCRIPT FADE -->
+<!-- GSAP ANIMATIONS -->
 <script>
-  const fades = document.querySelectorAll('.fade');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('show');
-    });
+  gsap.registerPlugin(ScrollTrigger);
+
+  // HEADER aparece suave desde arriba
+  gsap.to("#gsap-header", {
+    opacity: 1,
+    y: 0,
+    duration: 0.8,
+    ease: "power2.out",
+    from: { y: -30 }
   });
-  fades.forEach(el => observer.observe(el));
+
+  // NAV links con stagger
+  gsap.to("#gsap-nav", {
+    opacity: 1,
+    duration: 0.8,
+    delay: 0.2
+  });
+
+  gsap.from("#gsap-nav a", {
+    opacity: 0,
+    y: -10,
+    stagger: 0.08,
+    duration: 0.6,
+    ease: "power2.out",
+    delay: 0.3
+  });
+
+  // Fade-in global para elementos con scroll
+  gsap.utils.toArray('.gsap-fade').forEach((el) => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 85%"
+        }
+      }
+    );
+  });
 </script>
 
 </body>
