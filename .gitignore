@@ -3,8 +3,6 @@
 *.pyo
 *.pyd
 __pycache__/
-*.db
-*.sqlite3
 *.log
 *.pot
 *.pyc
@@ -14,8 +12,6 @@ __pycache__/
 *.pot
 *.pyc
 *.pyo
-*.db
-*.sqlite3
 
 # Virtual Environment
 venv/
