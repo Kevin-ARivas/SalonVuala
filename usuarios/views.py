@@ -54,28 +54,29 @@ def crear_usuario(request):
 
 def enviar_correo_verificacion(request, usuario):
     dominio = request.get_host()
+
     uid = urlsafe_base64_encode(force_bytes(usuario.pk))
     token = default_token_generator.make_token(usuario)
 
     link_activacion = f"https://{dominio}/usuarios/activar/{uid}/{token}/"
 
     asunto = "Verifica tu cuenta en Salón Vualá"
+    mensaje = f"Hola {usuario.username}, verifica tu cuenta:\n\n{link_activacion}"
 
-    mensaje = (
-        f"Hola {usuario.username}, verifica tu cuenta en el siguiente enlace:\n\n"
-        f"{link_activacion}"
-    )
+    url = f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages"
 
-    return requests.post(
-        f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages",
+    respuesta = requests.post(
+        url,
         auth=("api", settings.MAILGUN_API_KEY),
         data={
-        "from": f"Salón Vualá <{settings.MAILGUN_FROM}>",
-        "to": usuario.email,
-        "subject": asunto,
-        "text": mensaje,
-}
+            "from": f"Salón Vualá <{settings.MAILGUN_FROM}>",
+            "to": usuario.email,
+            "subject": asunto,
+            "text": mensaje,
+        }
     )
+
+    return respuesta
 
 
 # ============================================================
