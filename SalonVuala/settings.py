@@ -150,15 +150,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL – Configuración para verificación
 # ============================================
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.mailgun.org"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-# Credenciales desde Railway
-EMAIL_HOST_USER = os.environ.get("MAILGUN_FROM")      # postmaster@mg.salonvuala.cl
-EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_API_KEY")  # API Key SMTP
-
-# Correos salientes
-DEFAULT_FROM_EMAIL = os.environ.get("MAILGUN_FROM")
-SERVER_EMAIL = os.environ.get("MAILGUN_FROM")
+MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY")
+MAILGUN_DOMAIN = os.environ.get("MAILGUN_DOMAIN")
+MAILGUN_FROM = os.environ.get("MAILGUN_FROM")

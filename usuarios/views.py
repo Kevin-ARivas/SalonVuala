@@ -60,19 +60,21 @@ def enviar_correo_verificacion(request, usuario):
 
     asunto = "Verifica tu cuenta en Salón Vualá"
 
-    mensaje = f"""Hola {usuario.username}, verifica tu cuenta en el siguiente enlace:{link_activacion}"""
+    mensaje = (
+        f"Hola {usuario.username}, verifica tu cuenta en el siguiente enlace:\n\n"
+        f"{link_activacion}"
+    )
 
     return requests.post(
         f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages",
         auth=("api", settings.MAILGUN_API_KEY),
         data={
             "from": settings.MAILGUN_FROM,
-            "to": [usuario.email],
+            "to": usuario.email,
             "subject": asunto,
             "text": mensaje,
         }
     )
-
 
 
 # ============================================================
