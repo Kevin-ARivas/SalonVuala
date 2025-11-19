@@ -167,3 +167,12 @@ def login_usuario(request):
 def logout_usuario(request):
     logout(request)
     return redirect('login_usuario')
+
+def send_simple_message():
+  	return requests.post(
+  		"https://api.mailgun.net/v3/mg.salonvuala.cl/messages",
+  		auth=("api", os.getenv('API_KEY', 'API_KEY')),
+  		data={"from": "Mailgun Sandbox <postmaster@mg.salonvuala.cl>",
+			"to": "Matias Nicolas Urrutia Roa <vuala.salonestudio@gmail.com>",
+  			"subject": "Hello Matias Nicolas Urrutia Roa",
+  			"text": "Congratulations Matias Nicolas Urrutia Roa, you just sent an email with Mailgun! You are truly awesome!"})
