@@ -69,11 +69,11 @@ def enviar_correo_verificacion(request, usuario):
         f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages",
         auth=("api", settings.MAILGUN_API_KEY),
         data={
-            "from": settings.MAILGUN_FROM,
-            "to": usuario.email,
-            "subject": asunto,
-            "text": mensaje,
-        }
+        "from": f"Salón Vualá <{settings.MAILGUN_FROM}>",
+        "to": usuario.email,
+        "subject": asunto,
+        "text": mensaje,
+}
     )
 
 
