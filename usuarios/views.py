@@ -8,6 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.conf import settings
 import requests
+import os
 from .models import Usuarios
 from .forms import UsuarioForm, UsuarioFormAdmin
 
