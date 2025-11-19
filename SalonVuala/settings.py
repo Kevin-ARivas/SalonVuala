@@ -155,7 +155,10 @@ EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  # postmaster@mg.salonvuala.cl
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")  # API SMTP password
+# Credenciales desde Railway
+EMAIL_HOST_USER = os.environ.get("MAILGUN_FROM")      # postmaster@mg.salonvuala.cl
+EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_API_KEY")  # API Key SMTP
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Correos salientes
+DEFAULT_FROM_EMAIL = os.environ.get("MAILGUN_FROM")
+SERVER_EMAIL = os.environ.get("MAILGUN_FROM")
