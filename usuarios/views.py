@@ -7,7 +7,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.conf import settings
-
+import requests
 from .models import Usuarios
 from .forms import UsuarioForm, UsuarioFormAdmin
 
@@ -52,31 +52,25 @@ def crear_usuario(request):
 # ============================================================
 
 def enviar_correo_verificacion(request, usuario):
-    dominio = get_current_site(request).domain
+    dominio = request.get_host()
     uid = urlsafe_base64_encode(force_bytes(usuario.pk))
     token = default_token_generator.make_token(usuario)
 
-    link_activacion = f"http://{dominio}/usuarios/activar/{uid}/{token}/"
+    link_activacion = f"https://{dominio}/usuarios/activar/{uid}/{token}/"
 
     asunto = "Verifica tu cuenta en Salón Vualá"
 
-    mensaje_texto = (
-        f"Hola {usuario.username}, verifica tu cuenta en el siguiente enlace:\n\n"
-        f"{link_activacion}"
-    )
+    mensaje = f"""Hola {usuario.username}, verifica tu cuenta en el siguiente enlace:{link_activacion}"""
 
-    mensaje_html = render_to_string("usuarios/correo_verificacion.html", {
-        "usuario": usuario,
-        "link": link_activacion,
-    })
-
-    send_mail(
-        asunto,
-        mensaje_texto,             
-        settings.DEFAULT_FROM_EMAIL,
-        [usuario.email],
-        fail_silently=False,       
-        html_message=mensaje_html  
+    return requests.post(
+        f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages",
+        auth=("api", settings.MAILGUN_API_KEY),
+        data={
+            "from": settings.MAILGUN_FROM,
+            "to": [usuario.email],
+            "subject": asunto,
+            "text": mensaje,
+        }
     )
 
 
