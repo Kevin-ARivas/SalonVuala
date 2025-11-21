@@ -34,16 +34,28 @@
             </button>
         </form>
 
+        <!-- Línea separadora -->
+        <div class="flex items-center my-8">
+            <div class="flex-1 h-px bg-neutral-700"></div>
+            <span class="px-3 text-gray-500 text-sm">o continúa con</span>
+            <div class="flex-1 h-px bg-neutral-700"></div>
+        </div>
+
+        <!-- BOTÓN GOOGLE LOGIN -->
+        <a href="{% url 'social:begin' 'google-oauth2' %}"
+           class="w-full flex items-center justify-center gap-3 bg-white text-black py-3 rounded-lg font-medium border border-neutral-700 hover:bg-neutral-200 transition">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                 alt="Google" class="w-5 h-5">
+            Iniciar sesión con Google
+        </a>
+
         <p class="text-center text-gray-400 text-sm mt-6">
             ¿No tienes cuenta?
             <a href="{% url 'registro_usuario' %}"
-                class="text-[var(--accent)] hover:text-[var(--accent-hover)]">Regístrate
-                aquí</a>
+                class="text-[var(--accent)] hover:text-[var(--accent-hover)]">Regístrate aquí</a>
         </p>
 
     </div>
 </section>
-
-
 
 {% endblock %}
