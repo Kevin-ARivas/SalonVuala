@@ -27,7 +27,7 @@ urlpatterns = [
     path('proveedores/', include('proveedores.urls')),
     path('reportes/', include('reportes.urls')),
     path('usuarios/', include('usuarios.urls')),
-    path('usuarios/', include('social_django.urls', namespace='social')),
+    
 ]
 
 # ✅ Servir imágenes subidas en desarrollo

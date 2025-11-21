@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+import include
 
 urlpatterns = [
     path('registro/', views.crear_usuario, name='registro_usuario'),
@@ -9,6 +10,6 @@ urlpatterns = [
     path('editar/<int:pk>/', views.editar_usuario, name='editar_usuario'),
     path('eliminar/<int:pk>/', views.eliminar_usuario, name='eliminar_usuario'),
 
-    # Activación por correo:
-    path('activar/<uidb64>/<token>/', views.activar_cuenta, name='activar_cuenta'),
+# Google OAuth (lo maneja social_django)
+    path('', include('social_django.urls', namespace='social')),
 ]
