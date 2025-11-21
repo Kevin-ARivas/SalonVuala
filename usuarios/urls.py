@@ -1,6 +1,6 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
-import include
+
 
 urlpatterns = [
     path('registro/', views.crear_usuario, name='registro_usuario'),
