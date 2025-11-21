@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from datetime import date, timedelta, datetime, time
 from django.http import JsonResponse
+from .forms import ServicioForm
 
 User = get_user_model()
 
@@ -70,31 +71,30 @@ def lista_servicios(request):
 
 @login_required
 def agregar_servicio(request):
-    if request.method == 'POST':
-        Servicio.objects.create(
-            nombre=request.POST['nombre'],
-            descripcion=request.POST.get('descripcion', ''),
-            precio=request.POST['precio'],
-            duracion=request.POST['duracion']
-        )
-        return redirect('lista_servicios')
+    if request.method == "POST":
+        form = ServicioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("lista_servicios")
+    else:
+        form = ServicioForm()
 
-    return render(request, 'agenda/agregar_servicio.html')
+    return render(request, "agenda/agregar_servicio.html", {"form": form})
 
 
 @login_required
 def editar_servicio(request, id):
-    servicio = get_object_or_404(Servicio, id=id)
+    servicio = get_object_or_404(Servicio, pk=id)
 
-    if request.method == 'POST':
-        servicio.nombre = request.POST['nombre']
-        servicio.descripcion = request.POST.get('descripcion', '')
-        servicio.precio = request.POST['precio']
-        servicio.duracion = request.POST['duracion']
-        servicio.save()
-        return redirect('lista_servicios')
+    if request.method == "POST":
+        form = ServicioForm(request.POST, instance=servicio)
+        if form.is_valid():
+            form.save()
+            return redirect("lista_servicios")
+    else:
+        form = ServicioForm(instance=servicio)
 
-    return render(request, 'agenda/editar_servicio.html', {'servicio': servicio})
+    return render(request, "agenda/editar_servicio.html", {"form": form})
 
 
 @login_required

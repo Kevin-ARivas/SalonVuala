@@ -11,33 +11,32 @@
         {% csrf_token %}
 
         <div class="mb-4">
-            <label class="block text-sm font-semibold text-gray-700">Nombre del Servicio</label>
-            <input type="text" name="nombre" required
-                class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
+            <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-semibold text-gray-700">
+                Nombre del Servicio
+            </label>
+            {{ form.nombre }}
         </div>
 
         <div class="mb-4">
-            <label class="block text-sm font-semibold text-gray-700">Descripción</label>
-            <textarea name="descripcion" rows="3"
-                class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2"></textarea>
+            <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-semibold text-gray-700">
+                Descripción
+            </label>
+            {{ form.descripcion }}
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
-                <label class="block text-sm font-semibold text-gray-700">Precio (CLP)</label>
-                <input type="number" name="precio" min="0" required
-                    class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
+                <label for="{{ form.precio.id_for_label }}" class="block text-sm font-semibold text-gray-700">
+                    Precio (CLP)
+                </label>
+                {{ form.precio }}
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700">Duración</label>
-                <select name="duracion" required
-                    class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
-                    <option value="30">30 minutos</option>
-                    <option value="60">1 hora</option>
-                    <option value="90">1 hora y media</option>
-                    <option value="120">2 horas</option>
-                </select>
+                <label for="{{ form.duracion.id_for_label }}" class="block text-sm font-semibold text-gray-700">
+                    Duración
+                </label>
+                {{ form.duracion }}
             </div>
         </div>
 
@@ -52,7 +51,6 @@
                 Guardar Servicio
             </button>
         </div>
-
     </form>
 
 </div>

@@ -31,13 +31,10 @@
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700">Duración</label>
-                <select name="duracion"
-                    class="w-full border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-lg px-4 py-2">
-                    {% for dur, etiqueta in servicio.DURACION_CHOICES %}
-                        <option value="{{ dur }}" {% if servicio.duracion == dur %}selected{% endif %}>{{ etiqueta }}</option>
-                    {% endfor %}
-                </select>
+                <label for="{{ form.duracion.id_for_label }}" class="block text-sm font-semibold text-gray-700">
+                Duración
+                </label>
+            {{ form.duracion }}
             </div>
 
         </div>

@@ -2,18 +2,30 @@ from django.db import models
 from django.conf import settings  # ✅ Para usar el usuario correctamente
 from pagina_principal.models import Sucursales
 
+def generar_duracion_horas():
+    choices = []
+    for minutos in range(30, 601, 30): 
+        horas = minutos // 60
+        mins_restantes = minutos % 60
+
+        if horas == 0:
+            texto = f"{mins_restantes} minutos"
+        elif mins_restantes == 0:
+            texto = f"{horas} hora" if horas == 1 else f"{horas} horas"
+        else:
+            texto = f"{horas} hora {mins_restantes} min" if horas == 1 else f"{horas} horas {mins_restantes} min"
+        choices.append((minutos, texto))
+
+    return choices
+
+duracion_choices = generar_duracion_horas()
+
 class Servicio(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True)
     precio = models.PositiveIntegerField(default=0)
 
-    DURACION_CHOICES = [
-        (30, "30 minutos"),
-        (60, "1 hora"),
-        (90, "1 hora y media"),
-        (120, "2 horas"),
-    ]
-    duracion = models.PositiveSmallIntegerField(choices=DURACION_CHOICES, default=60)
+    duracion = models.IntegerField(choices=duracion_choices)
 
     def __str__(self):
         return f"{self.nombre} - ${self.precio}"
