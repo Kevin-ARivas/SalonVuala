@@ -30,8 +30,8 @@
           <div class="text-lg font-semibold">{{ s.nombre }}</div>
           <div class="text-[#bababa]">{{ s.direccion }}</div>
 
-          <button onclick="selectSucursal('{{ s.id }}', '{{ s.nombre }}')" 
-                  class="mt-4 px-5 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
+          <button onclick="selectSucursal('{{ s.id }}', '{{ s.nombre }}')"
+            class="mt-4 px-5 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
             Elegir esta sucursal
           </button>
         </div>
@@ -49,12 +49,10 @@
 
     <div class="grid md:grid-cols-2 gap-6">
       {% for s in servicios %}
-      <div class="servicio-card cursor-pointer border border-[#1b1b1b] rounded-lg p-5 hover:border-[var(--accent)] transition"
-           data-id="{{ s.id }}"
-           data-nombre="{{ s.nombre }}"
-           data-duracion="{{ s.get_duracion_display }}"
-           data-precio="{{ s.precio }}"
-           onclick="selectServicio(this)">
+      <div
+        class="servicio-card cursor-pointer border border-[#1b1b1b] rounded-lg p-5 hover:border-[var(--accent)] transition"
+        data-id="{{ s.id }}" data-nombre="{{ s.nombre }}" data-duracion="{{ s.get_duracion_display }}"
+        data-precio="{{ s.precio }}" onclick="selectServicio(this)">
         <div class="flex justify-between">
           <div>
             <div class="font-semibold">{{ s.nombre }}</div>
@@ -71,7 +69,7 @@
     </div>
 
     <button onclick="if(validarServicio()) toStep(3)"
-            class="mt-6 px-5 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
+      class="mt-6 px-5 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
       Continuar
     </button>
   </div>
@@ -86,7 +84,8 @@
     <div class="grid md:grid-cols-2 gap-6">
       <div class="border border-[#1b1b1b] rounded-lg p-5">
         <label class="block text-sm mb-2">Fecha</label>
-        <input type="date" id="fecha" class="w-full bg-transparent border border-[#2a2a2a] rounded p-2">
+        <input type="date" id="fecha" class="w-full bg-transparent border border-[#2a2a2a] rounded p-2"
+          onchange="renderHoras()">
       </div>
 
       <div class="border border-[#1b1b1b] rounded-lg p-5">
@@ -96,7 +95,7 @@
     </div>
 
     <button onclick="if(validarFechaHora()) toStep(4)"
-            class="mt-6 px-5 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
+      class="mt-6 px-5 py-2 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
       Continuar
     </button>
   </div>
@@ -108,7 +107,7 @@
       <button onclick="toStep(3)" class="text-sm text-[#bababa] hover:text-white">← Cambiar fecha u hora</button>
     </div>
 
-    <form method="post" action=" " class="grid md:grid-cols-2 gap-6">
+    <form method="post" action="" class="grid md:grid-cols-2 gap-6">
       {% csrf_token %}
 
       <input type="hidden" name="sucursal_id" id="f_sucursal">
@@ -117,11 +116,31 @@
       <input type="hidden" name="hora" id="f_hora">
 
       <div class="border border-[#1b1b1b] rounded-lg p-5">
+
+        {% if request.user.is_authenticated %}
+
+        <!-- Usuario logeado → NO pedimos datos -->
+        <p class="text-sm mb-2 text-[#cfcfcf]">Usaremos los datos de tu cuenta:</p>
+
+        <div class="text-[#cfcfcf]">
+          <p><b>Nombre:</b> {{ request.user.username }}</p>
+          <p><b>Teléfono:</b> {{ request.user.telefono|default:"(no registrado)" }}</p>
+        </div>
+
+        <!-- Inputs ocultos -->
+        <input type="hidden" name="cliente" value="{{ request.user.id }}">
+        <input type="hidden" name="telefono" value="{{ request.user.telefono }}">
+
+        {% else %}
+
+        <!-- Usuario NO logeado → formulario normal -->
         <label class="block text-sm">Nombre del cliente</label>
         <input name="cliente" required class="mt-2 w-full bg-transparent border border-[#2a2a2a] rounded p-2">
 
         <label class="block text-sm mt-4">Teléfono</label>
         <input name="telefono" required class="mt-2 w-full bg-transparent border border-[#2a2a2a] rounded p-2">
+
+        {% endif %}
       </div>
 
       <div class="border border-[#1b1b1b] rounded-lg p-5">
@@ -136,97 +155,116 @@
         </ul>
 
         <button type="submit"
-                class="mt-6 w-full px-5 py-3 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
+          class="mt-6 w-full px-5 py-3 bg-[var(--accent)] text-black rounded hover:bg-[var(--accent-hover)]">
           Confirmar reserva
         </button>
       </div>
     </form>
   </div>
 
+
 </section>
 
 <script>
-let sucursalSel = null;
-let servicioSel = null;
-let horaSel = null;
+  let sucursalSel = null;
+  let servicioSel = null;
+  let horaSel = null;
 
-function selectSucursal(id, nombre){
-    sucursalSel = {id, nombre};
+  function selectSucursal(id, nombre) {
+    sucursalSel = { id, nombre };
     document.getElementById("f_sucursal").value = id;
     document.getElementById("r_sucursal").textContent = nombre;
     toStep(2);
-}
+  }
 
-function selectServicio(card){
-    document.querySelectorAll('.servicio-card').forEach(c=>c.classList.remove('border-[var(--accent)]'));
+  function selectServicio(card) {
+    document.querySelectorAll('.servicio-card').forEach(c => c.classList.remove('border-[var(--accent)]'));
     card.classList.add('border-[var(--accent)]');
 
     servicioSel = {
-        id: card.dataset.id,
-        nombre: card.dataset.nombre,
-        duracion: card.dataset.duracion,
-        precio: card.dataset.precio
+      id: card.dataset.id,
+      nombre: card.dataset.nombre,
+      duracion: card.dataset.duracion,
+      precio: card.dataset.precio
     };
 
     document.getElementById("r_servicio").textContent = servicioSel.nombre;
     document.getElementById("r_duracion").textContent = servicioSel.duracion;
     document.getElementById("r_precio").textContent = '$' + servicioSel.precio;
     document.getElementById("f_servicio").value = servicioSel.id;
-}
+  }
 
-function validarServicio(){
-    if(!servicioSel){ alert("Selecciona un servicio"); return false; }
+  function validarServicio() {
+    if (!servicioSel) { alert("Selecciona un servicio"); return false; }
     return true;
-}
+  }
 
-function renderHoras(){
-    const cont=document.getElementById('horas');
-    cont.innerHTML='';
-    const horas=[];
-    for(let h=10;h<=19;h++){
-        horas.push(`${h}:00`,`${h}:30`);
+  function renderHoras() {
+    const fecha = document.getElementById("fecha").value;
+    if (!fecha) {
+      document.getElementById("horas").innerHTML = "<p class='text-red-400'>Selecciona una fecha</p>";
+      return;
     }
-    horas.forEach(h=>{
-        const b=document.createElement("button");
-        b.type="button";
-        b.textContent=h;
-        b.className="px-3 py-1 border border-[#2a2a2a] rounded hover:border-[var(--accent)]";
-        b.onclick=()=>{
-            horaSel=h;
+
+    const suc = document.getElementById("f_sucursal").value;
+    const serv = document.getElementById("f_servicio").value;
+
+
+    fetch(`/api/horas-disponibles/?sucursal_id=${suc}&servicio_id=${serv}&fecha=${fecha}`)
+      .then(res => res.json())
+      .then(data => {
+        const cont = document.getElementById("horas");
+        cont.innerHTML = "";
+
+        if (data.horas.length === 0) {
+          cont.innerHTML = "<p class='text-red-400'>No hay horarios disponibles este día.</p>";
+          return;
+        }
+
+        data.horas.forEach(h => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.textContent = h;
+          b.className = "px-3 py-1 border border-[#2a2a2a] rounded hover:border-[var(--accent)]";
+
+          b.onclick = () => {
+            horaSel = h;
             document.getElementById("f_hora").value = h;
             document.getElementById("r_hora").textContent = h;
-            Array.from(cont.children).forEach(x=>x.classList.remove("!border-[var(--accent)]"));
+            Array.from(cont.children).forEach(x => x.classList.remove("!border-[var(--accent)]"));
             b.classList.add("!border-[var(--accent)]");
-        };
-        cont.appendChild(b);
-    });
-}
+          };
 
-function validarFechaHora(){
+          cont.appendChild(b);
+        });
+      });
+  }
+
+  function validarFechaHora() {
     const f = document.getElementById("fecha").value;
-    if(!f){ alert("Selecciona una fecha"); return false; }
-    if(!horaSel){ alert("Selecciona una hora"); return false; }
+    if (!f) { alert("Selecciona una fecha"); return false; }
+    if (!horaSel) { alert("Selecciona una hora"); return false; }
     document.getElementById("f_fecha").value = f;
     document.getElementById("r_fecha").textContent = f;
     return true;
-}
+  }
 
-function toStep(n){
-    ["step1","step2","step3","step4"].forEach((id,i)=>{
-        document.getElementById(id).classList.toggle("hidden", (i+1)!==n);
+  function toStep(n) {
+    ["step1", "step2", "step3", "step4"].forEach((id, i) => {
+      document.getElementById(id).classList.toggle("hidden", (i + 1) !== n);
     });
 
-    ["p1","p2","p3","p4"].forEach((id,i)=>{
-        document.getElementById(id).className = 
-            (i+1===n)
-            ? "px-3 py-1 rounded border border-[var(--accent)] text-[var(--accent)]"
-            : "px-3 py-1 rounded border border-[#2a2a2a] text-[#bababa]";
+    ["p1", "p2", "p3", "p4"].forEach((id, i) => {
+      document.getElementById(id).className =
+        (i + 1 === n)
+          ? "px-3 py-1 rounded border border-[var(--accent)] text-[var(--accent)]"
+          : "px-3 py-1 rounded border border-[#2a2a2a] text-[#bababa]";
     });
 
-    if(n===3) renderHoras();
-}
+    if (n === 3) renderHoras();
+  }
 
-toStep(1);
+  toStep(1);
 </script>
 
 {% endblock %}

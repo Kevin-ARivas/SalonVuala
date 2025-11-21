@@ -5,17 +5,20 @@
   <h1 class="text-2xl font-bold mb-4">Nueva Cita</h1>
 
   {% if error %}
-<div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 font-semibold">
+  <div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 font-semibold">
     {{ error }}
-</div>
-{% endif %}
+  </div>
+  {% endif %}
 
   <form method="POST" class="space-y-4">
     {% csrf_token %}
 
     <div>
       <label class="block font-semibold mb-1">Cliente</label>
-      <input name="cliente" id="cliente" type="text" class="w-full border p-2 rounded" required>
+      <input name="cliente_search" id="cliente_search" type="text" class="w-full border p-2 rounded" autocomplete="off"
+        placeholder="Escribe nombre, RUT o teléfono" required>
+      <input type="hidden" name="cliente" id="cliente">
+      <div id="cliente_suggestions" class="border rounded mt-1 max-h-56 overflow-auto bg-white hidden"></div>
     </div>
 
     <div>
@@ -27,7 +30,7 @@
       <label class="block font-semibold mb-1">Servicio</label>
       <select name="servicio" id="servicio" class="w-full border p-2 rounded" required>
         {% for s in servicios %}
-          <option value="{{ s.id }}">{{ s.nombre }} - ${{ s.precio }}</option>
+        <option value="{{ s.id }}">{{ s.nombre }} - ${{ s.precio }}</option>
         {% endfor %}
       </select>
     </div>
@@ -36,7 +39,7 @@
       <label class="block font-semibold mb-1">Estilista</label>
       <select name="estilista" id="estilista" class="w-full border p-2 rounded" required>
         {% for u in estilistas %}
-          <option value="{{ u.id }}">{{ u.first_name|default:u.username }}</option>
+        <option value="{{ u.id }}">{{ u.first_name|default:u.username }}</option>
         {% endfor %}
       </select>
     </div>
@@ -64,42 +67,114 @@
 </div>
 
 <script>
-function actualizarHoras() {
-    const servicio  = document.getElementById("servicio").value;
+  function actualizarHoras() {
+    const servicio = document.getElementById("servicio").value;
     const estilista = document.getElementById("estilista").value;
-    const fecha     = document.getElementById("fecha").value;
+    const fecha = document.getElementById("fecha").value;
 
     if (!servicio || !estilista || !fecha) return;
 
     // 👇 AQUÍ USAMOS BACKTICKS ( ` ) NO COMILLAS SIMPLES
     fetch(`/agenda/obtener_horas/?servicio=${servicio}&estilista=${estilista}&fecha=${fecha}`)
-        .then(resp => resp.json())
-        .then(data => {
-            const horaSelect = document.getElementById("hora");
-            horaSelect.innerHTML = "";
+      .then(resp => resp.json())
+      .then(data => {
+        const horaSelect = document.getElementById("hora");
+        horaSelect.innerHTML = "";
 
-            if (!data.horas || data.horas.length === 0) {
-                horaSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
-                return;
-            }
+        if (!data.horas || data.horas.length === 0) {
+          horaSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
+          return;
+        }
 
-            data.horas.forEach(function(h) {
-                // 👇 AQUÍ TAMBIÉN USAMOS BACKTICKS
-                horaSelect.innerHTML += `<option value="${h}">${h}</option>`;
-            });
-        })
-        .catch(err => {
-            console.error("Error al obtener horas:", err);
-            const horaSelect = document.getElementById("hora");
-            horaSelect.innerHTML = '<option value="">Error al cargar horas</option>';
+        data.horas.forEach(function (h) {
+          // 👇 AQUÍ TAMBIÉN USAMOS BACKTICKS
+          horaSelect.innerHTML += `<option value="${h}">${h}</option>`;
         });
-}
+      })
+      .catch(err => {
+        console.error("Error al obtener horas:", err);
+        const horaSelect = document.getElementById("hora");
+        horaSelect.innerHTML = '<option value="">Error al cargar horas</option>';
+      });
+  }
 
-// Esperar que el DOM esté listo antes de enganchar los eventos
-document.addEventListener("DOMContentLoaded", function () {
+  // Esperar que el DOM esté listo antes de enganchar los eventos
+  document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("servicio").addEventListener("change", actualizarHoras);
     document.getElementById("estilista").addEventListener("change", actualizarHoras);
     document.getElementById("fecha").addEventListener("change", actualizarHoras);
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const search = document.getElementById("cliente_search");
+    const hiddenId = document.getElementById("cliente");
+    const suggestions = document.getElementById("cliente_suggestions");
+    const telefonoInput = document.getElementById("telefono");
+    let timer = null;
+
+    function clearSuggestions() {
+        suggestions.innerHTML = "";
+        suggestions.classList.add("hidden");
+    }
+
+    function renderSuggestions(items) {
+        suggestions.innerHTML = "";
+        if (!items.length) {
+            suggestions.classList.add("hidden");
+            return;
+        }
+        items.forEach(it => {
+            const div = document.createElement("div");
+            div.className = "p-2 hover:bg-gray-100 cursor-pointer text-sm";
+            div.textContent = it.label;
+            div.dataset.id = it.id;
+            div.dataset.name = it.name;
+            div.dataset.phone = it.phone;
+            div.addEventListener("click", function() {
+                // al seleccionar, llenar campos
+                hiddenId.value = this.dataset.id;
+                search.value = this.dataset.name + (this.dataset.phone ? " — " + this.dataset.phone : "");
+                telefonoInput.value = this.dataset.phone;
+                clearSuggestions();
+            });
+            suggestions.appendChild(div);
+        });
+        suggestions.classList.remove("hidden");
+    }
+
+    function buscar(q) {
+        fetch(`/agenda/buscar_clientes/?q=${encodeURIComponent(q)}`)
+            .then(r => r.json())
+            .then(data => {
+                renderSuggestions(data.results || []);
+            })
+            .catch(err => {
+                console.error("Error buscar clientes:", err);
+                clearSuggestions();
+            });
+    }
+
+    search.addEventListener("input", function() {
+        const q = this.value.trim();
+        hiddenId.value = ""; // si el texto cambia, limpiar id seleccionado
+        if (timer) clearTimeout(timer);
+        if (!q) {
+            clearSuggestions();
+            return;
+        }
+        timer = setTimeout(() => buscar(q), 250); // debounce 250ms
+    });
+
+    // cerrar sugerencias al click fuera
+    document.addEventListener("click", function(e) {
+        if (!suggestions.contains(e.target) && e.target !== search) {
+            clearSuggestions();
+        }
+    });
+
+    // Si el admin deja el campo sin seleccionar un usuario pero con texto,
+    // el POST creará un cliente "rápido" usando ese nombre y teléfono.
 });
 </script>
 {% endblock %}

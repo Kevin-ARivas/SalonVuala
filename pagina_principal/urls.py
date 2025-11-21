@@ -7,5 +7,7 @@ urlpatterns = [
     path('matias/', views.matias, name='pagina_matias'),
     path('productos/', views.productos, name='pagina_productos'),
     path('reservar/', views.reservar, name='pagina_reservar'),
-    path('reservar/exito/', views.exito, name='exito'),
+    path('exito/<int:cita_id>/', views.exito, name='exito'),
+    path("api/horas-disponibles/", views.horas_disponibles, name="horas_disponibles"),
+
 ]

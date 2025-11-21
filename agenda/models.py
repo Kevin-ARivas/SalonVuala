@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings  # ✅ Para usar el usuario correctamente
 from pagina_principal.models import Sucursales
+from usuarios.models import Usuarios
 
 def generar_duracion_horas():
     choices = []
@@ -38,11 +39,11 @@ class Cita(models.Model):
         ('cancelada', 'Cancelada'),
     ]
 
-    cliente = models.CharField(max_length=120)
+    cliente = models.ForeignKey(Usuarios, on_delete=models.CASCADE, blank=True, null=True ,related_name='citas_cliente')
     telefono = models.CharField(max_length=20, blank=True, null=True)
     sucursal = models.ForeignKey(Sucursales, on_delete=models.CASCADE, blank=True, null=True)
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
-    estilista = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    estilista = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='citas_estilista')
 
     fecha = models.DateField()
     hora = models.TimeField()

@@ -20,6 +20,8 @@ from . import views
 urlpatterns = [
     path('citas/', views.citas, name='citas'),
     path('citas/nueva/', views.nueva_cita, name='nueva_cita'),
+    path('obtener_horas/', views.obtener_horas, name='obtener_horas'),
+    path('buscar_clientes/', views.buscar_clientes, name='buscar_clientes'),
 
     path('obtener_horas/', views.obtener_horas, name='obtener_horas'),
 

@@ -3,36 +3,65 @@
 {% block content %}
 
 <section class="max-w-3xl mx-auto px-6 py-20 text-center gsap-confirm-container opacity-0">
-  <h1 class="text-3xl font-semibold gsap-confirm-title opacity-0">¡Cita creada con éxito!</h1>
-  <p class="text-[#cfcfcf] mt-3 opacity-0 gsap-confirm-item">Te enviaremos un correo de confirmación si corresponde.</p>
+  
+  <!-- Título -->
+  <h1 class="text-3xl font-semibold gsap-confirm-title opacity-0">
+    ¡Cita creada con éxito!
+  </h1>
 
-  <div class="mt-8 text-left border border-[#1b1b1b] rounded-lg p-6 max-w-xl mx-auto space-y-2">
+  <p class="text-[#cfcfcf] mt-3 opacity-0 gsap-confirm-item">
+    Te enviaremos un correo de confirmación si corresponde.
+  </p>
+
+  <!-- Contenedor del resumen -->
+  <div class="mt-8 text-left border border-[#1b1b1b] rounded-lg p-6 max-w-xl mx-auto space-y-3">
 
     {% if cita.sucursal %}
-    <div class="gsap-confirm-item opacity-0"><b>Sucursal:</b> {{ cita.sucursal.nombre }}</div>
+    <div class="gsap-confirm-item opacity-0">
+      <b>Sucursal:</b> {{ cita.sucursal.nombre }}
+    </div>
     {% endif %}
 
-    <div class="gsap-confirm-item opacity-0"><b>Servicio:</b> {{ cita.servicio.nombre }}</div>
-    <div class="gsap-confirm-item opacity-0"><b>Fecha:</b> {{ cita.fecha }}</div>
-    <div class="gsap-confirm-item opacity-0"><b>Hora:</b> {{ cita.hora }}</div>
+    <div class="gsap-confirm-item opacity-0">
+      <b>Servicio:</b> {{ cita.servicio.nombre }}
+    </div>
 
-    <div class="gsap-confirm-item opacity-0"><b>Nombre:</b> {{ cita.nombre_cliente }}</div>
+    <div class="gsap-confirm-item opacity-0">
+      <b>Fecha:</b> {{ cita.fecha|date:"d/m/Y" }}
+    </div>
+
+    <div class="gsap-confirm-item opacity-0">
+      <b>Hora:</b> {{ cita.hora|time:"H:i" }}
+    </div>
+
+    <div class="gsap-confirm-item opacity-0">
+      <b>Nombre:</b> {{ cita.cliente.username }}
+    </div>
 
     {% if cita.email %}
-    <div class="gsap-confirm-item opacity-0"><b>Email:</b> {{ cita.email }}</div>
+    <div class="gsap-confirm-item opacity-0">
+      <b>Email:</b> {{ cita.email }}
+    </div>
     {% endif %}
 
-    <div class="gsap-confirm-item opacity-0"><b>Teléfono:</b> {{ cita.telefono }}</div>
+    <div class="gsap-confirm-item opacity-0">
+      <b>Teléfono:</b> {{ cita.telefono }}
+    </div>
 
     {% if cita.comentarios %}
-    <div class="gsap-confirm-item opacity-0"><b>Comentarios:</b> {{ cita.comentarios }}</div>
+    <div class="gsap-confirm-item opacity-0">
+      <b>Comentarios:</b> {{ cita.comentarios }}
+    </div>
     {% endif %}
 
   </div>
 
-  <a href="/" class="mt-8 inline-block px-6 py-3 border border-[var(--accent)] rounded hover:bg-[var(--accent)] hover:text-black transition gsap-confirm-button opacity-0">
+  <!-- Botón para volver -->
+  <a href="/" 
+     class="mt-8 inline-block px-6 py-3 border border-[var(--accent)] rounded hover:bg-[var(--accent)] hover:text-black transition gsap-confirm-button opacity-0">
     Volver al inicio
   </a>
+
 </section>
 
 <!-- GSAP -->
@@ -40,7 +69,6 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
 
-    // Fade + slide del contenedor general
     gsap.to(".gsap-confirm-container", {
       opacity: 1,
       y: -10,
@@ -48,7 +76,6 @@
       ease: "power2.out"
     });
 
-    // Título
     gsap.to(".gsap-confirm-title", {
       opacity: 1,
       y: -10,
@@ -57,7 +84,6 @@
       ease: "power2.out"
     });
 
-    // Items del resumen uno por uno
     gsap.to(".gsap-confirm-item", {
       opacity: 1,
       y: -8,
@@ -67,7 +93,6 @@
       delay: 0.3
     });
 
-    // Botón al final
     gsap.to(".gsap-confirm-button", {
       opacity: 1,
       y: -10,

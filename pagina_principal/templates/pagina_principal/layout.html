@@ -17,13 +17,11 @@
       --accent-hover: #D18A5F;
     }
 
-    /* Elementos que aparecerán con GSAP */
     .gsap-fade {
       opacity: 0;
       transform: translateY(20px);
     }
 
-    /* Animación del hero existente */
     @keyframes zoomHero {
       0% { transform: scale(1); }
       100% { transform: scale(1.12); }
@@ -42,22 +40,22 @@
   <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
     <a href="/" class="text-xl font-light tracking-wide">SALÓN VUALÁ</a>
 
-    <nav id="gsap-nav" class="hidden md:flex gap-8 text-sm font-light items-center opacity-0">
-      <a href="/" class="hover:text-[var(--accent)]">Inicio</a>
-      <a href="/servicios/" class="hover:text-[var(--accent)]">Servicios</a>
-      <a href="/matias/" class="hover:text-[var(--accent)]">Quién es Matías</a>
-      <a href="/productos/" class="hover:text-[var(--accent)]">Productos</a>
-      <a href="/reservar/" class="px-4 py-2 border border-[var(--accent)] rounded hover:bg-[var(--accent)] hover:text-black transition">
-        Agendar
-      </a>
+    <!-- 🔥 Nuevo contenedor que se anima (NO los <a>) -->
+    <div id="gsap-nav-container" class="hidden md:flex opacity-0">
+      <nav class="flex gap-8 text-sm font-light items-center">
+        <a href="/servicios/" class="hover:text-[var(--accent)]">Servicios</a>
+        <a href="/matias/" class="hover:text-[var(--accent)]">Quién es Matías</a>
+        <a href="/productos/" class="hover:text-[var(--accent)]">Productos</a>
+        <a href="/reservar/" class="px-4 py-2 border border-[var(--accent)] rounded hover:bg-[var(--accent)] hover:text-black transition">Agendar</a>
 
-      {% if user.is_authenticated %}
-        <span class="text-gray-400">Hola, {{ user.username }}</span>
-        <a href="{% url 'logout_usuario' %}" class="hover:text-[var(--accent)]">Cerrar sesión</a>
-      {% else %}
-        <a href="{% url 'login_usuario' %}" class="hover:text-[var(--accent)]">Iniciar sesión</a>
-      {% endif %}
-    </nav>
+        {% if user.is_authenticated %}
+          <span class="text-gray-400">Hola, {{ user.username }}</span>
+          <a href="{% url 'logout_usuario' %}" class="hover:text-[var(--accent)]">Cerrar sesión</a>
+        {% else %}
+          <a href="{% url 'login_usuario' %}" class="hover:text-[var(--accent)]">Iniciar sesión</a>
+        {% endif %}
+      </nav>
+    </div>
   </div>
 </header>
 
@@ -95,23 +93,14 @@
     from: { y: -30 }
   });
 
-  // NAV links con stagger
-  gsap.to("#gsap-nav", {
+  // 🔥 Ahora solo se anima el contenedor del nav, NO los <a>
+  gsap.to("#gsap-nav-container", {
     opacity: 1,
-    duration: 0.8,
+    duration: 0.7,
     delay: 0.2
   });
 
-  gsap.from("#gsap-nav a", {
-    opacity: 0,
-    y: -10,
-    stagger: 0.08,
-    duration: 0.6,
-    ease: "power2.out",
-    delay: 0.3
-  });
-
-  // Fade-in global para elementos con scroll
+  // Fade-in global para elementos
   gsap.utils.toArray('.gsap-fade').forEach((el) => {
     gsap.fromTo(el,
       { opacity: 0, y: 20 },

@@ -5,6 +5,9 @@ from django.contrib.auth.decorators import login_required
 from datetime import date, timedelta, datetime, time
 from django.http import JsonResponse
 from .forms import ServicioForm
+from usuarios.models import Usuarios
+from django.views.decorators.http import require_GET, require_POST
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -157,15 +160,51 @@ def obtener_horas(request):
 
     return JsonResponse({"horas": horas_str})
 
+@require_GET
+@login_required
+def buscar_clientes(request):
+    q = request.GET.get('q', '').strip()
+    if not q:
+        return JsonResponse({'results': []})
+
+    # 
+    qs = Usuarios.objects.filter(#.filter(tipo_usuario='cliente')( #← FILTRAR SOLO CLIENTES
+        Q(username__icontains=q) |
+        Q(first_name__icontains=q) |
+        Q(last_name__icontains=q) |
+        Q(rut__icontains=q) |
+        Q(telefono__icontains=q)
+    )[:12]  # limitar resultados
+
+    results = []
+    for u in qs:
+        results.append({
+            'id': u.id,
+            'label': f"{u.first_name or u.username} {u.last_name or ''} — {u.rut or ''}",
+            'name': u.first_name or u.username,
+            'phone': u.telefono or '',
+            'rut': u.rut or '',
+        })
+    return JsonResponse({'results': results})
+
+
 @login_required
 def nueva_cita(request):
     servicios = Servicio.objects.all()
-    estilistas = User.objects.filter(is_active=True)
+    estilistas = Usuarios.objects.filter(tipo_usuario='trabajador', is_active=True)
 
     if request.method == "POST":
+        # validar fecha
+        fecha_str = request.POST.get("fecha")
+        try:
+            fecha = datetime.strptime(fecha_str, "%Y-%m-%d").date()
+        except Exception:
+            return render(request, "agenda/nueva_cita.html", {
+                "servicios": servicios,
+                "estilistas": estilistas,
+                "error": "Fecha inválida."
+            })
 
-        # ⛔ VALIDAR FECHA NO ANTERIOR A HOY
-        fecha = datetime.strptime(request.POST["fecha"], "%Y-%m-%d").date()
         if fecha < date.today():
             return render(request, "agenda/nueva_cita.html", {
                 "servicios": servicios,
@@ -173,13 +212,51 @@ def nueva_cita(request):
                 "error": "No puedes agendar citas en días anteriores."
             })
 
+        servicio_id = request.POST.get("servicio")
+        estilista_id = request.POST.get("estilista")
+        hora = request.POST.get("hora")
+
+        # CLIENTE: preferimos id (cuando admin selecciona), sino creamos uno rápido
+        cliente_id = request.POST.get("cliente")  # hidden input con id si se seleccionó
+        cliente_nombre = request.POST.get("cliente_search", "").strip()
+        cliente_telefono = request.POST.get("telefono", "").strip()
+        cliente = None
+
+        if cliente_id:
+            try:
+                cliente = Usuarios.objects.get(id=cliente_id)
+            except Usuarios.DoesNotExist:
+                cliente = None
+
+        if not cliente:
+            # Intentar encontrar por RUT o teléfono (evita duplicados)
+            if cliente_telefono:
+                cliente, created = Usuarios.objects.get_or_create(
+                    telefono=cliente_telefono,
+                    defaults={
+                        'username': f"cli_{cliente_telefono}",
+                        'first_name': cliente_nombre or cliente_telefono,
+                        'tipo_usuario': 'cliente'
+                    }
+                )
+            else:
+                # Crear temp con username único
+                base = (cliente_nombre or "cliente").strip().replace(" ", "_")[:20]
+                username = f"{base}_{int(datetime.now().timestamp())}"
+                cliente = Usuarios.objects.create(
+                    username=username,
+                    first_name=cliente_nombre or username,
+                    tipo_usuario='cliente'
+                )
+
+        # crear cita
         Cita.objects.create(
-            cliente       = request.POST["cliente"],
-            telefono      = request.POST["telefono"],
-            servicio_id   = request.POST["servicio"],
-            estilista_id  = request.POST["estilista"],
-            fecha         = request.POST["fecha"],
-            hora          = request.POST["hora"],
+            cliente=cliente,
+            telefono=cliente_telefono or cliente.telefono,
+            servicio_id=servicio_id,
+            estilista_id=estilista_id,
+            fecha=fecha,
+            hora=hora
         )
         return redirect("citas")
 
