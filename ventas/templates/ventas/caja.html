@@ -1,0 +1,119 @@
+{% extends "inicio/base_dashboard.html" %}
+{% load static %}
+{% block content %}
+
+<div class="min-h-screen bg-gray-100 p-6">
+
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6">💳 Caja Registradora</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- ================================
+             COL 1-2 → SERVICIOS
+        ================================= -->
+        <div class="lg:col-span-2">
+            <h2 class="text-xl font-bold text-gray-800 mb-3">Servicios</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-h-96 overflow-y-auto">
+
+                {% for s in servicios %}
+                <form method="POST" action="{% url 'agregar_servicio' s.id %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="bg-pink-100 hover:bg-pink-200 transition p-3 rounded-xl shadow-md flex flex-col items-center text-center border border-gray-200">
+
+                        <span class="font-bold text-gray-800">{{ s.nombre }}</span>
+                        <span class="text-sm text-gray-600">{{ s.get_duracion_display }}</span>
+                        <span class="font-extrabold text-gray-900 mt-1">${{ s.precio }}</span>
+
+                    </button>
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ================================
+             COL 3 → PRODUCTOS
+        ================================= -->
+        <div class="col-span-1">
+
+            <h2 class="text-xl font-bold text-gray-800 mb-3">Productos</h2>
+
+            <div class="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+
+                {% for p in productos %}
+                <form method="POST" action="{% url 'agregar_producto' p.id %}">
+                    {% csrf_token %}
+
+                    <button type="submit"
+                        class="flex items-center bg-white hover:bg-blue-50 transition p-3 rounded-xl shadow-md border">
+
+                        <img src="{{ p.imagen.url }}" class="w-12 h-12 rounded-lg object-cover mr-3">
+
+                        <div class="flex-1">
+                            <span class="font-semibold text-gray-800">{{ p.nombre }}</span><br>
+                            <span class="text-sm text-gray-600">Stock: {{ p.stock }}</span>
+                        </div>
+
+                        <span class="font-extrabold text-gray-900">${{ p.precio }}</span>
+
+                    </button>
+                </form>
+                {% endfor %}
+            </div>
+
+        </div>
+
+
+        <!-- ================================
+             COL 4 → TICKET + FINALIZAR
+        ================================= -->
+        <div class="col-span-1 bg-white shadow-xl rounded-xl p-6">
+
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🧾 Ticket</h2>
+
+            <div class="space-y-2 max-h-56 overflow-y-auto">
+                {% for item in carrito %}
+                <div class="flex justify-between border-b pb-2">
+                    <span>{{ item.nombre }}</span>
+                    <span>${{ item.precio }}</span>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-sm">Aún no hay servicios o productos agregados.</p>
+                {% endfor %}
+            </div>
+
+            <div class="mt-6 text-right">
+                <h3 class="text-2xl font-extrabold">Total: ${{ total }}</h3>
+            </div>
+
+            <!-- Selector de Estilista -->
+            <form method="POST" action="{% url 'finalizar_venta' %}" class="mt-6">
+                {% csrf_token %}
+
+                <label class="font-semibold block mb-2">Estilista que atendió:</label>
+                <select name="estilista" class="w-full border p-2 rounded mb-4">
+                    {% for e in estilistas %}
+                    <option value="{{ e.id }}">{{ e.first_name }} {{ e.last_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label class="font-semibold block mb-2">Método de Pago:</label>
+                <select name="metodo" class="w-full border p-2 rounded mb-4">
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Débito/Crédito">Débito/Crédito</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+
+                <button type="submit"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition shadow-md">
+                    Confirmar y Registrar Venta
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
