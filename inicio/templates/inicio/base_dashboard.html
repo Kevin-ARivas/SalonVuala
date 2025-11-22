@@ -19,6 +19,25 @@
     <main class="pt-6 px-6">
         {% block content %}
         {% endblock %}
+        {% if messages %}
+<div class="fixed top-4 right-4 space-y-2 z-50">
+    {% for m in messages %}
+    <div class="px-4 py-3 rounded-lg shadow-lg text-white 
+                {% if m.tags == 'success' %} bg-green-600 
+                {% elif m.tags == 'error' %} bg-red-600 
+                {% else %} bg-gray-700 {% endif %}">
+        {{ m }}
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+setTimeout(() => {
+    document.querySelectorAll('.z-50').forEach(el => el.remove());
+}, 2800);
+</script>
+{% endif %}
+
     </main>
 
 </body>

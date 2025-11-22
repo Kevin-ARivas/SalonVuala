@@ -1,0 +1,149 @@
+{% extends "inicio/base_dashboard.html" %}
+{% load static %}
+{% block content %}
+
+<div class="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8">
+
+        <!-- TÍTULO -->
+        <div class="flex items-center justify-between mb-8 border-b pb-4">
+            <h1 class="text-3xl font-extrabold text-gray-800">Editar Cita</h1>
+            <a href="{% url 'citas' %}"
+               class="text-gray-500 hover:text-pink-600 transition font-semibold">
+               ← Volver
+            </a>
+        </div>
+
+        <!-- FORMULARIO -->
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- CLIENTE (NO EDITABLE) -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Cliente</label>
+
+                <input type="hidden" name="cliente_id" value="{{ cita.cliente.id }}">
+                <input type="text"
+                       value="{{ cita.cliente.first_name }} {{ cita.cliente.last_name }}"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed"
+                       disabled>
+            </div>
+
+            <!-- TELÉFONO -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Teléfono</label>
+                <input type="text" name="telefono" value="{{ cita.telefono }}"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500 focus:ring-pink-500 transition bg-white">
+            </div>
+
+            <!-- FECHA -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Fecha</label>
+                <input id="fecha_edit" type="date" name="fecha" value="{{ cita.fecha|date:'Y-m-d' }}"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500 focus:ring-pink-500 transition bg-white">
+            </div>
+
+            <!-- HORA -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Hora</label>
+                
+                <select id="hora_edit" name="hora"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white">
+                    <option value="{{ cita.hora|time:'H:i' }}" selected>
+                        {{ cita.hora|time:"H:i" }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- SERVICIO -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Servicio</label>
+                <select id="servicio_edit" name="servicio"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white">
+                    {% for s in servicios %}
+                        <option value="{{ s.id }}"
+                            {% if cita.servicio.id == s.id %}selected{% endif %}>
+                            {{ s.nombre }} ({{ s.get_duracion_display }} / ${{ s.precio }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- ESTILISTA -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Estilista</label>
+                <select id="estilista_edit" name="estilista"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white">
+                    {% for e in estilistas %}
+                        <option value="{{ e.id }}"
+                            {% if cita.estilista.id == e.id %}selected{% endif %}>
+                            {{ e.first_name }} {{ e.last_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- ESTADO -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Estado</label>
+                <select name="estado"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white">
+                    <option value="pendiente" {% if cita.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                    <option value="confirmada" {% if cita.estado == 'confirmada' %}selected{% endif %}>Confirmada</option>
+                </select>
+            </div>
+
+            <!-- BOTONES -->
+            <div class="flex justify-between items-center pt-6 border-t mt-8">
+
+                <a href="{% url 'eliminar_cita' cita.id %}"
+                   class="px-5 py-2.5 rounded-lg bg-red-100 text-red-700 font-semibold hover:bg-red-200 transition shadow">
+                    🗑️ Eliminar
+                </a>
+
+                <button type="submit"
+                        class="px-6 py-3 bg-pink-600 text-white rounded-full font-bold hover:bg-pink-700 transition shadow-lg hover:shadow-xl">
+                    Guardar Cambios
+                </button>
+
+            </div>
+        </form>
+
+    </div>
+
+
+    <!-- SCRIPT PARA HORAS DINÁMICAS -->
+<script>
+function actualizarHorasEditar() {
+    const servicio = document.getElementById("servicio_edit").value;
+    const estilista = document.getElementById("estilista_edit").value;
+    const fecha = document.getElementById("fecha_edit").value;
+
+    if (!servicio || !estilista || !fecha) return;
+
+    fetch(`/agenda/obtener_horas/?servicio=${servicio}&estilista=${estilista}&fecha=${fecha}`)
+        .then(resp => resp.json())
+        .then(data => {
+            const hora = document.getElementById("hora_edit");
+            hora.innerHTML = "";
+
+            if (!data.horas.length) {
+                hora.innerHTML = `<option value="">No hay horas disponibles</option>`;
+                return;
+            }
+
+            data.horas.forEach(h => {
+                hora.innerHTML += `<option value="${h}">${h}</option>`;
+            });
+        });
+}
+
+document.getElementById("servicio_edit").addEventListener("change", actualizarHorasEditar);
+document.getElementById("estilista_edit").addEventListener("change", actualizarHorasEditar);
+document.getElementById("fecha_edit").addEventListener("change", actualizarHorasEditar);
+</script>
+
+</div>
+
+{% endblock %}
