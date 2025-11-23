@@ -4,113 +4,157 @@
 
 <div class="min-h-screen bg-gray-100 p-6">
 
-    <h1 class="text-3xl font-extrabold text-gray-900 mb-6">💳 Caja Registradora</h1>
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
+        💳 Caja Registradora
+    </h1>
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
 
-        <!-- ================================
-             COL 1-2 → SERVICIOS
-        ================================= -->
-        <div class="lg:col-span-2">
-            <h2 class="text-xl font-bold text-gray-800 mb-3">Servicios</h2>
+        <!-- ============================
+             COL 1 - SERVICIOS
+        ============================= -->
+        <div>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Servicios</h2>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-h-96 overflow-y-auto">
-
-                {% for s in servicios %}
-                <form method="POST" action="{% url 'agregar_servicio' s.id %}">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {% for servicio in servicios %}
+                <form method="POST" action="{% url 'agregar_servicio' servicio.id %}">
                     {% csrf_token %}
                     <button type="submit"
-                        class="bg-pink-100 hover:bg-pink-200 transition p-3 rounded-xl shadow-md flex flex-col items-center text-center border border-gray-200">
-
-                        <span class="font-bold text-gray-800">{{ s.nombre }}</span>
-                        <span class="text-sm text-gray-600">{{ s.get_duracion_display }}</span>
-                        <span class="font-extrabold text-gray-900 mt-1">${{ s.precio }}</span>
-
-                    </button>
-                </form>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- ================================
-             COL 3 → PRODUCTOS
-        ================================= -->
-        <div class="col-span-1">
-
-            <h2 class="text-xl font-bold text-gray-800 mb-3">Productos</h2>
-
-            <div class="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
-
-                {% for p in productos %}
-                <form method="POST" action="{% url 'agregar_producto' p.id %}">
-                    {% csrf_token %}
-
-                    <button type="submit"
-                        class="flex items-center bg-white hover:bg-blue-50 transition p-3 rounded-xl shadow-md border">
-
-                        <img src="{{ p.imagen.url }}" class="w-12 h-12 rounded-lg object-cover mr-3">
-
-                        <div class="flex-1">
-                            <span class="font-semibold text-gray-800">{{ p.nombre }}</span><br>
-                            <span class="text-sm text-gray-600">Stock: {{ p.stock }}</span>
+                            class="w-full h-full text-left bg-pink-50 hover:bg-pink-100 border border-pink-200 rounded-2xl px-4 py-3 shadow-sm transition flex flex-col justify-between">
+                        <div class="mb-2">
+                            <p class="text-sm font-semibold text-gray-700">{{ servicio.nombre }}</p>
+                            <p class="text-xs text-gray-500">{{ servicio.get_duracion_display }}</p>
                         </div>
-
-                        <span class="font-extrabold text-gray-900">${{ p.precio }}</span>
-
+                        <p class="text-lg font-extrabold text-pink-600">
+                            ${{ servicio.precio }}
+                        </p>
                     </button>
                 </form>
+                {% empty %}
+                <p class="text-gray-500 text-sm col-span-4">No hay servicios registrados.</p>
                 {% endfor %}
             </div>
-
         </div>
 
+        <!-- ============================
+             COL 2 - PRODUCTOS
+        ============================= -->
+        <div>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Productos</h2>
 
-        <!-- ================================
-             COL 4 → TICKET + FINALIZAR
-        ================================= -->
-        <div class="col-span-1 bg-white shadow-xl rounded-xl p-6">
-
-            <h2 class="text-xl font-bold text-gray-800 mb-4">🧾 Ticket</h2>
-
-            <div class="space-y-2 max-h-56 overflow-y-auto">
-                {% for item in carrito %}
-                <div class="flex justify-between border-b pb-2">
-                    <span>{{ item.nombre }}</span>
-                    <span>${{ item.precio }}</span>
-                </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {% for producto in productos %}
+                <form method="POST" action="{% url 'agregar_producto' producto.id %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="w-full h-full bg-white hover:bg-blue-50 border border-gray-200 rounded-2xl p-3 shadow-sm transition flex flex-col">
+                        <div class="flex-1 flex flex-col items-center text-center mb-2">
+                            {% if producto.imagen %}
+                                <img src="{{ producto.imagen.url }}"
+                                     alt="{{ producto.nombre }}"
+                                     class="w-16 h-16 object-contain mb-2">
+                            {% else %}
+                                <div class="w-16 h-16 mb-2 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+                                    IMG
+                                </div>
+                            {% endif %}
+                            <p class="text-sm font-semibold text-gray-800 line-clamp-2">
+                                {{ producto.nombre }}
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-gray-500">
+                            <span>Stock: {{ producto.stock }}</span>
+                            <span class="text-sm font-bold text-gray-900">
+                                ${{ producto.precio }}
+                            </span>
+                        </div>
+                    </button>
+                </form>
                 {% empty %}
-                <p class="text-gray-500 text-sm">Aún no hay servicios o productos agregados.</p>
+                <p class="text-gray-500 text-sm col-span-4">No hay productos registrados.</p>
                 {% endfor %}
             </div>
+        </div>
 
-            <div class="mt-6 text-right">
-                <h3 class="text-2xl font-extrabold">Total: ${{ total }}</h3>
+        <!-- ============================
+             COL 3 - TICKET
+        ============================= -->
+        <div class="bg-white shadow-xl rounded-2xl p-6 flex flex-col">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                🧾 Ticket
+            </h2>
+
+            <!-- Lista de ítems -->
+            <div class="flex-1 border border-gray-100 rounded-xl mb-4 overflow-y-auto max-h-72">
+                {% if carrito %}
+                    {% for item in carrito %}
+<div class="flex justify-between">
+    <div>
+        <p>{{ item.nombre }}</p>
+        <p class="text-xs text-gray-400">{{ item.tipo }}</p>
+    </div>
+
+    <div class="flex items-center gap-3">
+        <span class="font-bold">${{ item.precio }}</span>
+        <a href="{% url 'eliminar_item' forloop.counter0 %}" class="text-red-500">✕</a>
+    </div>
+</div>
+{% endfor %}
+
+                {% else %}
+                    <p class="text-center text-gray-500 text-sm py-6">
+                        Aún no hay productos o servicios agregados.
+                    </p>
+                {% endif %}
             </div>
 
-            <!-- Selector de Estilista -->
-            <form method="POST" action="{% url 'finalizar_venta' %}" class="mt-6">
+            <!-- Total -->
+            <div class="mb-4 flex justify-between items-center">
+                <span class="text-lg font-semibold text-gray-700">Total:</span>
+                <span class="text-2xl font-extrabold text-gray-900">
+                    ${{ total }}
+                </span>
+            </div>
+
+            <!-- Form finalizar venta -->
+            <form method="POST" action="{% url 'finalizar_venta' %}" class="space-y-4">
                 {% csrf_token %}
 
-                <label class="font-semibold block mb-2">Estilista que atendió:</label>
-                <select name="estilista" class="w-full border p-2 rounded mb-4">
-                    {% for e in estilistas %}
-                    <option value="{{ e.id }}">{{ e.first_name }} {{ e.last_name }}</option>
-                    {% endfor %}
-                </select>
+                <!-- Estilista -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                        Estilista que atendió:
+                    </label>
+                    <select name="estilista"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        <option value="">(Sin asignar)</option>
+                        {% for e in estilistas %}
+                        <option value="{{ e.id }}">
+                            {{ e.first_name|default:e.username }} {{ e.last_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-                <label class="font-semibold block mb-2">Método de Pago:</label>
-                <select name="metodo" class="w-full border p-2 rounded mb-4">
-                    <option value="Efectivo">Efectivo</option>
-                    <option value="Débito/Crédito">Débito/Crédito</option>
-                    <option value="Transferencia">Transferencia</option>
-                </select>
+                <!-- Método de pago -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                        Método de Pago:
+                    </label>
+                    <select name="metodo"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Débito/Crédito">Débito / Crédito</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </select>
+                </div>
 
                 <button type="submit"
-                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition shadow-md">
+                        class="w-full mt-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-full shadow-md transition">
                     Confirmar y Registrar Venta
                 </button>
             </form>
-
         </div>
 
     </div>

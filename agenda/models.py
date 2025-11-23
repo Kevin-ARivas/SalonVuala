@@ -49,7 +49,7 @@ class Cita(models.Model):
     hora = models.TimeField()
 
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
-
+    pagado = models.BooleanField(default=False)
     creado = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

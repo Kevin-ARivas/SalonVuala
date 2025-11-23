@@ -7,7 +7,6 @@
     
         <div class="max-w-7xl mx-auto pt-6 mb-6 border-t-4 border-gray-400"></div>
 
-
         <div class="bg-white shadow-xl rounded-lg p-6 mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b pb-4">
                 <div>
@@ -46,6 +45,7 @@
 
             </div>
 
+            <!-- === MÉTRICAS DINÁMICAS (4 COLUMNAS) === -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
                 
                 <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-lg flex flex-col justify-between">
@@ -53,8 +53,8 @@
                         <h3 class="text-gray-500 font-semibold uppercase text-sm">Ingresos Totales</h3>
                         <span class="text-gray-400 cursor-pointer hover:text-gray-600">⮟</span>
                     </div>
-                    <p class="text-3xl font-extrabold text-green-600 mt-2">$1.200.000</p>
-                    <p class="text-sm text-green-500 font-semibold mt-1">+12% vs mes anterior</p>
+                    <p class="text-3xl font-extrabold text-green-600 mt-2">${{ ingresos_totales }}</p>
+                    <p class="text-sm text-green-500 font-semibold mt-1">{{ cambio_ingresos }}</p>
                 </div>
 
                 <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-lg flex flex-col justify-between">
@@ -62,8 +62,8 @@
                         <h3 class="text-gray-500 font-semibold uppercase text-sm">Servicios Realizados</h3>
                         <span class="text-gray-400 cursor-pointer hover:text-gray-600">🗃️</span>
                     </div>
-                    <p class="text-3xl font-extrabold text-gray-900 mt-2">115</p>
-                    <p class="text-sm text-red-500 font-semibold mt-1">-5% vs mes anterior</p>
+                    <p class="text-3xl font-extrabold text-gray-900 mt-2">{{ servicios_realizados }}</p>
+                    <p class="text-sm text-red-500 font-semibold mt-1">{{ cambio_servicios }}</p>
                 </div>
 
                 <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-lg flex flex-col justify-between">
@@ -71,8 +71,8 @@
                         <h3 class="text-gray-500 font-semibold uppercase text-sm">Clientes Únicos</h3>
                         <span class="text-gray-400 cursor-pointer hover:text-gray-600">🧑‍🤝‍🧑</span>
                     </div>
-                    <p class="text-3xl font-extrabold text-gray-900 mt-2">83</p>
-                    <p class="text-sm text-green-500 font-semibold mt-1">+15% vs mes anterior</p>
+                    <p class="text-3xl font-extrabold text-gray-900 mt-2">{{ clientes_unicos }}</p>
+                    <p class="text-sm text-green-500 font-semibold mt-1">{{ cambio_clientes }}</p>
                 </div>
 
                 <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-lg flex flex-col justify-between">
@@ -80,13 +80,36 @@
                         <h3 class="text-gray-500 font-semibold uppercase text-sm">Productos Vendidos</h3>
                         <span class="text-gray-400 cursor-pointer hover:text-gray-600">🧴</span>
                     </div>
-                    <p class="text-3xl font-extrabold text-gray-900 mt-2">31</p>
-                    <p class="text-sm text-green-500 font-semibold mt-1">+22% vs mes anterior</p>
+                    <p class="text-3xl font-extrabold text-gray-900 mt-2">{{ productos_vendidos }}</p>
+                    <p class="text-sm text-green-500 font-semibold mt-1">{{ cambio_productos }}</p>
                 </div>
             </div>
             
         </div>
-        
+
+        <!-- === NUEVO: CITAS DEL DÍA CONFIRMADAS === -->
+        <div class="bg-white shadow-xl rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-1">Citas Confirmadas Hoy</h2>
+            <p class="text-sm text-gray-500 mb-4">Citas pagadas y confirmadas para hoy</p>
+
+            {% if citas_hoy %}
+            <ul class="divide-y">
+                {% for cita in citas_hoy %}
+                <li class="py-3 flex justify-between items-center">
+                    <div>
+                        <p class="font-semibold text-gray-800">{{ cita.servicio.nombre }}</p>
+                        <p class="text-sm text-gray-500">{{ cita.hora }} — Cliente: {{ cita.usuario.get_full_name }}</p>
+                        <p class="text-xs text-green-600 font-bold">Pagado ✔</p>
+                    </div>
+                    <span class="text-gray-400">💈 {{ cita.estilista.nombre }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-gray-400 italic">No hay citas confirmadas para hoy.</p>
+            {% endif %}
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             <div class="bg-white shadow-xl rounded-lg p-6 min-h-80">
