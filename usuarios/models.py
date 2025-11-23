@@ -42,7 +42,7 @@ def validar_dv_rut(value):
 
 
 # ============================
-# MODELO DE USUARIO PERSONALIZADO
+# MODELO DE USUARIO 
 # ============================
 
 class Usuarios(AbstractUser):
