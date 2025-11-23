@@ -48,7 +48,7 @@ def validar_dv_rut(value):
 class Usuarios(AbstractUser):
     rut = models.CharField(
         max_length=10,
-        unique=True,
+        unique=False,
         validators=[validar_formato_rut, validar_dv_rut],
         help_text="Ingrese un RUT sin puntos. Ej: 12345678-9",
         blank=True,  # Permitir que el campo sea opcional ------TEMPORALMENTE-----------
