@@ -43,6 +43,9 @@ PARECE QUE ESTE TEMPLATE NO ESTA HACIENDO NADA NO ES BASE, EL LAYAOUT ES EL QUE 
 
       <!-- NAVBAR PARA ESCRITORIO -->
       <nav class="hidden md:flex items-center gap-6">
+        {% if request.user.tipo_usuario == 'admin' %}
+        <a href="/dashboard/" class="hover:text-yellow-400">Ingreso App</a>
+        {% endif %}
         <a href="/" class="hover:text-yellow-400">Inicio</a>
         <a href="/servicios/" class="hover:text-yellow-400">Servicios</a>
         <a href="/matias/" class="hover:text-yellow-400">Quién es Matías</a>
