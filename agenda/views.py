@@ -193,17 +193,14 @@ def buscar_clientes(request):
 @login_required
 def nueva_cita(request):
     servicios = Servicio.objects.all()
-    estilistas = Usuarios.objects.filter(is_active=True, tipo_usuario__in=['trabajador', 'admin'])
+    estilistas = Usuarios.objects.filter(tipo_usuario='trabajador', is_active=True)
 
     if request.method == "POST":
-
-        # -------------------------
-        # 1) VALIDAR FECHA
-        # -------------------------
+        # validar fecha
         fecha_str = request.POST.get("fecha")
         try:
             fecha = datetime.strptime(fecha_str, "%Y-%m-%d").date()
-        except:
+        except Exception:
             return render(request, "agenda/nueva_cita.html", {
                 "servicios": servicios,
                 "estilistas": estilistas,
@@ -214,124 +211,57 @@ def nueva_cita(request):
             return render(request, "agenda/nueva_cita.html", {
                 "servicios": servicios,
                 "estilistas": estilistas,
-                "error": "No puedes registrar citas en días anteriores."
+                "error": "No puedes agendar citas en días anteriores."
             })
 
-        # -------------------------
-        # 2) VALIDAR HORA
-        # -------------------------
-        hora_str = request.POST.get("hora")
-        try:
-            hora = datetime.strptime(hora_str, "%H:%M").time()
-        except:
-            return render(request, "agenda/nueva_cita.html", {
-                "servicios": servicios,
-                "estilistas": estilistas,
-                "error": "Selecciona una hora válida."
-            })
-
-        # si la fecha es hoy, no permitir horas pasadas
-        if fecha == date.today() and hora <= datetime.now().time():
-            return render(request, "agenda/nueva_cita.html", {
-                "servicios": servicios,
-                "estilistas": estilistas,
-                "error": "No puedes registrar citas en una hora que ya pasó."
-            })
-
-        # -------------------------
-        # 3) VALIDAR SERVICIO
-        # -------------------------
         servicio_id = request.POST.get("servicio")
-        try:
-            servicio = Servicio.objects.get(id=servicio_id)
-        except Servicio.DoesNotExist:
-            return render(request, "agenda/nueva_cita.html", {
-                "error": "Debes seleccionar un servicio válido.",
-                "servicios": servicios,
-                "estilistas": estilistas,
-            })
-
-        # -------------------------
-        # 4) VALIDAR ESTILISTA
-        # -------------------------
         estilista_id = request.POST.get("estilista")
-        try:
-            estilista = Usuarios.objects.get(id=estilista_id, tipo_usuario__in=['trabajador', 'admin'])
-        except Usuarios.DoesNotExist:
-            return render(request, "agenda/nueva_cita.html", {
-                "error": "Debes seleccionar un estilista válido.",
-                "servicios": servicios,
-                "estilistas": estilistas,
-            })
+        hora = request.POST.get("hora")
 
-        # -------------------------
-        # 5) VALIDAR SOLAPAMIENTO
-        # -------------------------
-        inicio_nueva = hora
-        fin_nueva = (datetime.combine(date.today(), hora) + timedelta(minutes=servicio.duracion)).time()
-
-        citas_existentes = Cita.objects.filter(fecha=fecha, estilista_id=estilista_id)
-
-        for c in citas_existentes:
-            inicio_c = c.hora
-            fin_c = (datetime.combine(date.today(), c.hora) + timedelta(minutes=c.servicio.duracion)).time()
-
-            if inicio_c < fin_nueva and inicio_nueva < fin_c:
-                return render(request, "agenda/nueva_cita.html", {
-                    "servicios": servicios,
-                    "estilistas": estilistas,
-                    "error": f"El estilista ya tiene una cita entre {inicio_c} y {fin_c}."
-                })
-
-        # -------------------------
-        # 6) VALIDAR CLIENTE
-        # -------------------------
-        cliente_id = request.POST.get("cliente")
+        # CLIENTE: preferimos id (cuando admin selecciona), sino creamos uno rápido
+        cliente_id = request.POST.get("cliente")  # hidden input con id si se seleccionó
         cliente_nombre = request.POST.get("cliente_search", "").strip()
-        telefono = request.POST.get("telefono", "").strip()
+        cliente_telefono = request.POST.get("telefono", "").strip()
+        cliente = None
 
-        # validar teléfono chileno
-        phone_regex = r"^\+?56\d{9}$"
-        if telefono and not re.match(phone_regex, telefono):
-            return render(request, "agenda/nueva_cita.html", {
-                "servicios": servicios,
-                "estilistas": estilistas,
-                "error": "Formato de teléfono no válido. Debe ser +569XXXXXXXX."
-            })
+        if cliente_id:
+            try:
+                cliente = Usuarios.objects.get(id=cliente_id)
+            except Usuarios.DoesNotExist:
+                cliente = None
 
-        # evitar duplicados cliente
-        if telefono:
-            cliente = Usuarios.objects.filter(telefono=telefono).first()
-            if not cliente:
-                cliente = Usuarios.objects.create(
-                    username=f"cli_{telefono}",
-                    first_name=cliente_nombre or telefono,
-                    tipo_usuario='cliente',
-                    telefono=telefono
+        if not cliente:
+            # Intentar encontrar por RUT o teléfono (evita duplicados)
+            if cliente_telefono:
+                cliente, created = Usuarios.objects.get_or_create(
+                    telefono=cliente_telefono,
+                    defaults={
+                        'username': f"cli_{cliente_telefono}",
+                        'first_name': cliente_nombre or cliente_telefono,
+                        'tipo_usuario': 'cliente'
+                    }
                 )
-        else:
-            cliente = Usuarios.objects.create(
-                username=f"cliente_{int(datetime.now().timestamp())}",
-                first_name=cliente_nombre or "Cliente",
-                tipo_usuario='cliente'
-            )
+            else:
+                # Crear temp con username único
+                base = (cliente_nombre or "cliente").strip().replace(" ", "_")[:20]
+                username = f"{base}_{int(datetime.now().timestamp())}"
+                cliente = Usuarios.objects.create(
+                    username=username,
+                    first_name=cliente_nombre or username,
+                    tipo_usuario='cliente'
+                )
 
-        # -------------------------
-        # 7) GUARDAR CITA
-        # -------------------------
-
+        # crear cita
         Cita.objects.create(
             cliente=cliente,
-            telefono=telefono,
-            servicio=servicio,
-            estilista=estilista,
+            telefono=cliente_telefono or cliente.telefono,
+            servicio_id=servicio_id,
+            estilista_id=estilista_id,
             fecha=fecha,
             hora=hora
         )
+        return redirect("citas")
 
-        return redirect("citas")  # Dashboard profesional
-
-    # GET
     return render(request, "agenda/nueva_cita.html", {
         "servicios": servicios,
         "estilistas": estilistas,
