@@ -1,9 +1,12 @@
 {% extends "inicio/base_dashboard.html" %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto p-6">
 
-    <div class="flex justify-between items-center mb-6">
+<!-- Contenedor principal -->
+<div class="svc-page-container max-w-7xl mx-auto p-6 opacity-0">
+
+    <!-- Encabezado -->
+    <div class="svc-header-wrapper flex justify-between items-center mb-6 opacity-0">
         <h1 class="text-3xl font-extrabold text-gray-900">Servicios del Salón</h1>
 
         <a href="{% url 'agregar_servicio' %}" 
@@ -12,7 +15,8 @@
         </a>
     </div>
 
-    <div class="bg-white shadow-xl rounded-lg p-6">
+    <!-- Tabla / Contenido -->
+    <div class="svc-table-wrapper bg-white shadow-xl rounded-lg p-6 opacity-0">
 
         {% if servicios %}
         <table class="min-w-full text-left border-collapse">
@@ -55,4 +59,28 @@
     </div>
 
 </div>
+
+<!-- GSAP Animaciones -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    gsap.timeline()
+        .to(".svc-page-container", {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out"
+        })
+        .fromTo(".svc-header-wrapper", 
+            { opacity: 0, y: -20 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+            "-=0.3"
+        )
+        .fromTo(".svc-table-wrapper",
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" },
+            "-=0.3"
+        );
+});
+</script>
+
 {% endblock %}

@@ -1,0 +1,16 @@
+----------------------
+user: (trabajador)
+    Estilista01
+password:
+    estilos123
+----------------------
+user: (admin)
+    ivan
+password:
+    ivan2000
+----------------------
+user: (admin)
+    Drumontt
+password:
+    "porfavor poner la password"
+----------------------
