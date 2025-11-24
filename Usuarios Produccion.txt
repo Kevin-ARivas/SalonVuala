@@ -1,6 +1,7 @@
 ----------------------
 user: (trabajador)
     Estilista01
+    Estilista02
 password:
     estilos123
 ----------------------
@@ -13,4 +14,10 @@ user: (admin)
     Drumontt
 password:
     "porfavor poner la password"
+----------------------
+user: (cliente)
+    Customer01
+    Customer02
+password:
+    cliente123
 ----------------------

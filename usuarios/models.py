@@ -50,11 +50,7 @@ class Usuarios(AbstractUser):
         max_length=10,
         validators=[validar_formato_rut, validar_dv_rut],
         help_text="Ingrese un RUT sin puntos. Ej: 12345678-9",
-
-        #----------------------TEMPORALMENTE-----------
-        unique=False,
-        null=True,
-        blank=True,  # Permitir que el campo sea opcional ------TEMPORALMENTE-----------
+        unique=True,
     )
 
     telefono = models.CharField(max_length=13, blank=True, null=True)
