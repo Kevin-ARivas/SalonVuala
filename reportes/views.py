@@ -1,26 +1,24 @@
-
-
-
 from django.shortcuts import render
-from django.utils import timezone
+from django.utils.timezone import localdate
+from django.db.models import Sum
 from agenda.models import Cita
-from django.db.models import Sum, F
+from ventas.models import Venta   # 👈 CLAVE
 
 def reportes_dashboard(request):
-    hoy = timezone.now().date()
+    hoy = localdate()
 
+    # Citas confirmadas hoy (solo informativo)
     citas_hoy = Cita.objects.filter(
         fecha=hoy,
         estado="confirmada"
     )
 
-    # Ingresos = suma del precio del servicio asociado a cada cita confirmada
-    ingresos_totales = citas_hoy.aggregate(
-        total=Sum(F("servicio__precio"))
-    )["total"] or 0
+    # Ingresos reales desde caja (ventas)
+    ingresos_totales = Venta.objects.filter(
+        fecha__date=hoy
+    ).aggregate(total=Sum("total"))["total"] or 0
 
     return render(request, "reportes/reportes.html", {
         "citas_hoy": citas_hoy,
         "ingresos_totales": ingresos_totales,
     })
-

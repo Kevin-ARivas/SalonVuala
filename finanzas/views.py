@@ -1,9 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.db.models import Sum
 from django.utils.timezone import localdate
-from agenda.models import Servicio
-from inventario.models import Producto
-from .models import Venta, Gasto   # 👈 importa modelos financieros
+from .models import Gasto
+from ventas.models import Venta   # 👈 IMPORTANTE: importar Venta desde ventas
 
 # =====================================================
 # DASHBOARD FINANZAS
@@ -12,22 +11,19 @@ def finanzas(request):
     hoy = localdate()
 
     # Ingresos y gastos de HOY
-    ingresos_hoy = Venta.objects.filter(fecha__date=hoy).aggregate(
-        total=Sum("total")
-    )["total"] or 0
+    ingresos_hoy = Venta.objects.filter(
+        fecha__date=hoy
+    ).aggregate(total=Sum("total"))["total"] or 0
 
-    gastos_hoy = Gasto.objects.filter(fecha__date=hoy).aggregate(
-        total=Sum("monto")
-    )["total"] or 0
+    gastos_hoy = Gasto.objects.filter(
+        fecha__date=hoy
+    ).aggregate(total=Sum("monto"))["total"] or 0
 
     ganancia_neta = ingresos_hoy - gastos_hoy
 
-    if ingresos_hoy > 0:
-        margen = round(ganancia_neta / ingresos_hoy * 100, 1)
-    else:
-        margen = 0
+    margen = round((ganancia_neta / ingresos_hoy) * 100, 1) if ingresos_hoy else 0
 
-    # Transacciones recientes (HOY)
+    # Transacciones recientes
     transacciones = []
 
     for v in Venta.objects.filter(fecha__date=hoy).order_by("-fecha")[:10]:
@@ -48,8 +44,11 @@ def finanzas(request):
             "fecha": g.fecha,
         })
 
-    # Ordenamos todo junto por fecha descendente
-    transacciones = sorted(transacciones, key=lambda x: x["fecha"], reverse=True)
+    transacciones = sorted(
+        transacciones,
+        key=lambda x: x["fecha"],
+        reverse=True
+    )
 
     context = {
         "ingresos_hoy": ingresos_hoy,

@@ -1,13 +1,5 @@
 from django.db import models
 
-class Venta(models.Model):
-    total = models.IntegerField()
-    metodo_pago = models.CharField(max_length=50)
-    fecha = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Venta {self.id} - ${self.total}"
-
 
 class Gasto(models.Model):
     descripcion = models.CharField(max_length=200)
@@ -17,3 +9,25 @@ class Gasto(models.Model):
 
     def __str__(self):
         return f"Gasto {self.id} - ${self.monto} ({self.descripcion})"
+    
+class MovimientoCaja(models.Model):
+    TIPO_CHOICES = (
+        ("INGRESO", "Ingreso"),
+        ("EGRESO", "Egreso"),
+    )
+
+    fecha = models.DateTimeField(auto_now_add=True)
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+    monto = models.IntegerField()
+    descripcion = models.CharField(max_length=255)
+
+    # Relación opcional con una venta
+    venta = models.ForeignKey(
+        "ventas.Venta",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return f"{self.tipo} - ${self.monto}"

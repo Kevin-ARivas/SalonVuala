@@ -4,7 +4,10 @@ from agenda.models import Servicio, Cita
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.utils import timezone
-from .models import Venta
+from django.db import transaction
+
+from .models import Venta, DetalleVenta
+from finanzas.models import MovimientoCaja
 
 User = get_user_model()
 
@@ -26,7 +29,6 @@ def save_carrito(request, carrito):
 
 def caja(request):
     carrito = get_carrito(request)
-
     total = sum(item["precio"] for item in carrito)
 
     return render(request, "ventas/caja.html", {
@@ -65,9 +67,7 @@ def agregar_producto(request, id):
     })
     save_carrito(request, carrito)
 
-    # descontar stock
-    producto.stock -= 1
-    producto.save()
+    # ❌ YA NO SE DESCUENTA STOCK AQUÍ
 
     return redirect("caja")
 
@@ -82,6 +82,7 @@ def eliminar_item(request, index):
     return redirect("caja")
 
 
+@transaction.atomic
 def finalizar_venta(request):
     if request.method != "POST":
         return redirect("caja")
@@ -98,15 +99,48 @@ def finalizar_venta(request):
 
     estilista = User.objects.get(id=estilista_id) if estilista_id else None
 
-    # Crear la venta
-    Venta.objects.create(
+    # 1️⃣ Crear la venta
+    venta = Venta.objects.create(
         total=total,
         metodo_pago=metodo,
         fecha=timezone.now(),
         estilista=estilista
     )
 
-    # Limpiar carrito
+    # 2️⃣ Crear detalle de venta y descontar stock
+    for item in carrito:
+        if item["tipo"] == "producto":
+            producto = Producto.objects.get(id=item["id"])
+
+            DetalleVenta.objects.create(
+                venta=venta,
+                producto=producto,
+                precio=item["precio"],
+                cantidad=1
+            )
+
+            producto.stock -= 1
+            producto.save()
+
+        else:
+            servicio = Servicio.objects.get(id=item["id"])
+
+            DetalleVenta.objects.create(
+                venta=venta,
+                servicio=servicio,
+                precio=item["precio"],
+                cantidad=1
+            )
+
+    # 3️⃣ Registrar ingreso en finanzas
+    MovimientoCaja.objects.create(
+        tipo="INGRESO",
+        monto=venta.total,
+        descripcion=f"Venta #{venta.id}",
+        venta=venta
+    )
+
+    # 4️⃣ Limpiar carrito
     save_carrito(request, [])
 
     messages.success(request, "Venta registrada con éxito.")

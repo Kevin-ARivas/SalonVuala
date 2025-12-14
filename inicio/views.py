@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from agenda.models import Cita
 from inventario.models import Producto
-from finanzas.models import Venta
+from ventas.models import Venta
 from datetime import date
 from django.db import models
 

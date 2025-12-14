@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from inventario.models import Producto
+from agenda.models import Servicio
+
 User = get_user_model()
+
 
 class Venta(models.Model):
     total = models.IntegerField()
@@ -12,13 +16,29 @@ class Venta(models.Model):
         return f"Venta {self.id} - ${self.total}"
 
 
+class DetalleVenta(models.Model):
+    venta = models.ForeignKey(
+        Venta,
+        related_name="detalles",
+        on_delete=models.CASCADE
+    )
 
+    producto = models.ForeignKey(
+        Producto,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
 
-class Gasto(models.Model):
-    descripcion = models.CharField(max_length=200)
-    monto = models.IntegerField()
-    categoria = models.CharField(max_length=100, blank=True)
-    fecha = models.DateTimeField(auto_now_add=True)
+    servicio = models.ForeignKey(
+        Servicio,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    cantidad = models.PositiveIntegerField(default=1)
+    precio = models.IntegerField()
 
     def __str__(self):
-        return f"Gasto {self.id} - ${self.monto} ({self.descripcion})"
+        return f"Detalle venta {self.venta.id}"
