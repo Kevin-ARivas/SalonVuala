@@ -39,17 +39,32 @@ class Cita(models.Model):
         ('cancelada', 'Cancelada'),
     ]
 
-    cliente = models.ForeignKey(Usuarios, on_delete=models.CASCADE, blank=True, null=True ,related_name='citas_cliente')
+    cliente = models.ForeignKey(
+        Usuarios,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name='citas_cliente'
+    )
     telefono = models.CharField(max_length=20, blank=True, null=True)
     sucursal = models.ForeignKey(Sucursales, on_delete=models.CASCADE, blank=True, null=True)
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
-    estilista = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='citas_estilista')
+    estilista = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='citas_estilista'
+    )
 
     fecha = models.DateField()
     hora = models.TimeField()
 
-    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
-    pagado = models.BooleanField(default=False)
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default='pendiente'
+    )
+
     creado = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

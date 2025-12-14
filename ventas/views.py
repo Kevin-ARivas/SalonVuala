@@ -3,7 +3,6 @@ from inventario.models import Producto
 from agenda.models import Servicio, Cita
 from django.contrib.auth import get_user_model
 from django.contrib import messages
-from django.utils import timezone
 from django.db import transaction
 
 from .models import Venta, DetalleVenta
@@ -67,8 +66,7 @@ def agregar_producto(request, id):
     })
     save_carrito(request, carrito)
 
-    # ❌ YA NO SE DESCUENTA STOCK AQUÍ
-
+    # ⚠️ El stock se descuenta SOLO al cobrar
     return redirect("caja")
 
 
@@ -96,21 +94,21 @@ def finalizar_venta(request):
     total = sum(item["precio"] for item in carrito)
     estilista_id = request.POST.get("estilista")
     metodo = request.POST.get("metodo")
+    cita_id = request.POST.get("cita")  # opcional
 
     estilista = User.objects.get(id=estilista_id) if estilista_id else None
 
-    # 1️⃣ Crear la venta
+    # 1️⃣ Crear venta
     venta = Venta.objects.create(
         total=total,
         metodo_pago=metodo,
-        fecha=timezone.now(),
         estilista=estilista
     )
 
-    # 2️⃣ Crear detalle de venta y descontar stock
+    # 2️⃣ Crear detalle de venta + descontar stock
     for item in carrito:
         if item["tipo"] == "producto":
-            producto = Producto.objects.get(id=item["id"])
+            producto = Producto.objects.select_for_update().get(id=item["id"])
 
             DetalleVenta.objects.create(
                 venta=venta,
@@ -132,15 +130,22 @@ def finalizar_venta(request):
                 cantidad=1
             )
 
-    # 3️⃣ Registrar ingreso en finanzas
+    # 3️⃣ Marcar cita como pagada SOLO AQUÍ
+    if cita_id:
+        cita = Cita.objects.get(id=cita_id)
+        cita.pagado = True
+        cita.save()
+
+    # 4️⃣ Registrar movimiento financiero
     MovimientoCaja.objects.create(
         tipo="INGRESO",
+        origen="VENTA",
         monto=venta.total,
         descripcion=f"Venta #{venta.id}",
         venta=venta
     )
 
-    # 4️⃣ Limpiar carrito
+    # 5️⃣ Limpiar carrito
     save_carrito(request, [])
 
     messages.success(request, "Venta registrada con éxito.")

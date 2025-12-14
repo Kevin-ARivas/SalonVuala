@@ -87,29 +87,44 @@
             
         </div>
 
-        <!-- === NUEVO: CITAS DEL DÍA CONFIRMADAS === -->
-        <div class="bg-white shadow-xl rounded-lg p-6 mb-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-1">Citas Confirmadas Hoy</h2>
-            <p class="text-sm text-gray-500 mb-4">Citas pagadas y confirmadas para hoy</p>
+        <!-- === CITAS CONFIRMADAS DEL DÍA === -->
+<div class="bg-white shadow-xl rounded-lg p-6 mb-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-1">Citas Confirmadas Hoy</h2>
+    <p class="text-sm text-gray-500 mb-4">
+        Citas agendadas para hoy (el pago se realiza en caja)
+    </p>
 
-            {% if citas_hoy %}
-            <ul class="divide-y">
-                {% for cita in citas_hoy %}
-                <li class="py-3 flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold text-gray-800">{{ cita.servicio.nombre }}</p>
-                        <p class="text-sm text-gray-500">{{ cita.hora }} — Cliente: {{ cita.usuario.get_full_name }}</p>
-                        <p class="text-xs text-green-600 font-bold">Pagado ✔</p>
-                    </div>
-                    <span class="text-gray-400">💈 {{ cita.estilista.nombre }}</span>
-                </li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p class="text-gray-400 italic">No hay citas confirmadas para hoy.</p>
-            {% endif %}
-        </div>
+    {% if citas_hoy %}
+    <ul class="divide-y">
+        {% for cita in citas_hoy %}
+        <li class="py-3 flex justify-between items-center">
+            <div>
+                <p class="font-semibold text-gray-800">
+                    {{ cita.servicio.nombre }}
+                </p>
+                <p class="text-sm text-gray-500">
+                    {{ cita.hora }} — Cliente: {{ cita.cliente }}
+                </p>
 
+                {% if cita.pagado %}
+                    <p class="text-xs text-green-600 font-bold">Pagado en caja ✔</p>
+                {% else %}
+                    <p class="text-xs text-yellow-600 font-bold">Pendiente de pago</p>
+                {% endif %}
+            </div>
+
+            <span class="text-gray-400">
+                💈 {{ cita.estilista }}
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-gray-400 italic">
+        No hay citas confirmadas para hoy.
+    </p>
+    {% endif %}
+</div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             <div class="bg-white shadow-xl rounded-lg p-6 min-h-80">
