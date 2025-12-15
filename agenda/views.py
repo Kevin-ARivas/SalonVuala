@@ -35,23 +35,34 @@ def citas(request):
     inicio_semana = fecha - timedelta(days=fecha.weekday())
     semana = [inicio_semana + timedelta(days=i) for i in range(7)]
 
-    # FILTRO ESTILISTA
-    estilista_id = request.GET.get('estilista')
+    # FILTRO ESTILISTA (solo admin)
+    estilista_id = request.GET.get("estilista")
 
-    citas = Cita.objects.filter(fecha=fecha)
-    if estilista_id:
-        citas = citas.filter(estilista_id=estilista_id)
+    # =========================
+    # FILTRO DE CITAS POR ROL
+    # =========================
+    if request.user.tipo_usuario == "trabajador":
+        citas = Cita.objects.filter(
+            fecha=fecha,
+            estilista=request.user
+        )
+    else:
+        citas = Cita.objects.filter(fecha=fecha)
 
+        if estilista_id:
+            citas = citas.filter(estilista_id=estilista_id)
+
+    # MÉTRICAS
     total = citas.count()
-    confirmadas = citas.filter(estado='confirmada').count()
-    pendientes = citas.filter(estado='pendiente').count()
+    confirmadas = citas.filter(estado="confirmada").count()
+    pendientes = citas.filter(estado="pendiente").count()
 
     citas_por_dia = {
         d: Cita.objects.filter(fecha=d).count()
         for d in semana
     }
 
-    return render(request, 'agenda/citas.html', {
+    return render(request, "agenda/citas.html", {
         "fecha": fecha,
         "hoy": date.today(),
         "semana": semana,
@@ -60,8 +71,9 @@ def citas(request):
         "citas_por_dia": citas_por_dia,
         "total": total,
         "confirmadas": confirmadas,
-        "pendientes": pendientes
+        "pendientes": pendientes,
     })
+
 
 
 # ======================================================

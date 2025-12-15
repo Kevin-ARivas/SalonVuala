@@ -2,40 +2,42 @@ from django.shortcuts import render
 from django.db.models import Sum
 from django.utils.timezone import localdate
 from .models import Gasto
-from ventas.models import Venta   # 👈 IMPORTANTE: importar Venta desde ventas
+from ventas.models import Venta
+from django.contrib.auth.decorators import login_required
 
-# =====================================================
-# DASHBOARD FINANZAS
-# =====================================================
+@login_required
 def finanzas(request):
     hoy = localdate()
+    user = request.user
 
-    # Ingresos y gastos de HOY
-    ingresos_hoy = Venta.objects.filter(
-        fecha__date=hoy
-    ).aggregate(total=Sum("total"))["total"] or 0
+    if user.tipo_usuario == "trabajador":
+        ingresos_qs = Venta.objects.filter(
+            fecha__date=hoy,
+            estilista=user
+        )
+        gastos_qs = Gasto.objects.none()  # trabajador no ve gastos globales
+    else:
+        ingresos_qs = Venta.objects.filter(fecha__date=hoy)
+        gastos_qs = Gasto.objects.filter(fecha__date=hoy)
 
-    gastos_hoy = Gasto.objects.filter(
-        fecha__date=hoy
-    ).aggregate(total=Sum("monto"))["total"] or 0
+    ingresos_hoy = ingresos_qs.aggregate(total=Sum("total"))["total"] or 0
+    gastos_hoy = gastos_qs.aggregate(total=Sum("monto"))["total"] or 0
 
     ganancia_neta = ingresos_hoy - gastos_hoy
-
     margen = round((ganancia_neta / ingresos_hoy) * 100, 1) if ingresos_hoy else 0
 
-    # Transacciones recientes
     transacciones = []
 
-    for v in Venta.objects.filter(fecha__date=hoy).order_by("-fecha")[:10]:
+    for v in ingresos_qs.order_by("-fecha")[:10]:
         transacciones.append({
             "tipo": "ingreso",
-            "titulo": "Venta en caja",
+            "titulo": "Venta",
             "detalle": f"Método: {v.metodo_pago}",
             "monto": v.total,
             "fecha": v.fecha,
         })
 
-    for g in Gasto.objects.filter(fecha__date=hoy).order_by("-fecha")[:10]:
+    for g in gastos_qs.order_by("-fecha")[:10]:
         transacciones.append({
             "tipo": "gasto",
             "titulo": g.descripcion or "Gasto",
@@ -44,18 +46,12 @@ def finanzas(request):
             "fecha": g.fecha,
         })
 
-    transacciones = sorted(
-        transacciones,
-        key=lambda x: x["fecha"],
-        reverse=True
-    )
+    transacciones = sorted(transacciones, key=lambda x: x["fecha"], reverse=True)
 
-    context = {
+    return render(request, "finanzas/finanzas.html", {
         "ingresos_hoy": ingresos_hoy,
         "gastos_hoy": gastos_hoy,
         "ganancia_neta": ganancia_neta,
         "margen": margen,
         "transacciones": transacciones,
-    }
-
-    return render(request, "finanzas/finanzas.html", context)
+    })
